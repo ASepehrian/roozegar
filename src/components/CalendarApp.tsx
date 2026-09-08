@@ -2,12 +2,16 @@
 
 import { useEffect, useMemo, useState } from "react";
 import GirihDivider from "./GirihDivider";
+import ZodiacBadge from "./ZodiacBadge";
+import DateTools from "./DateTools";
+import PrayerTimesCard from "./PrayerTimesCard";
+import WeatherCard from "./WeatherCard";
+import QuoteCard from "./QuoteCard";
+import SettingsPanel, { FontFamily, FontSize, Theme } from "./SettingsPanel";
 import {
-  CalendarId,
   GREGORIAN_MONTHS,
   calOf,
   calToGregorian,
-  daysInGregorianMonth,
   dayOfPersianYear,
   daysUntilNextNowruz,
   monthGrid,
@@ -16,6 +20,9 @@ import {
   toFa,
   weekdayOf,
 } from "@/lib/calendar";
+import { zodiacForPersianMonth } from "@/lib/zodiac";
+import { Occasion, occasionsForGregorianDate } from "@/lib/occasions";
+import { couplerOfTheDay } from "@/lib/quotes";
 
 interface DayCellData {
   day: number;
@@ -24,42 +31,77 @@ interface DayCellData {
   outside: boolean;
   isToday: boolean;
   gLabel: string | null;
+  hLabel: string | null;
 }
 
 export default function CalendarApp() {
-  const [dark, setDark] = useState(false);
   const [tick, setTick] = useState(0);
   const [view, setView] = useState<{ y: number; m: number } | null>(null);
   const [selected, setSelected] = useState<{ y: number; m: number; d: number } | null>(null);
+  const [showReligious, setShowReligious] = useState(false);
 
-  const [convCal, setConvCal] = useState<CalendarId>("persian");
-  const [convY, setConvY] = useState<number | null>(null);
-  const [convM, setConvM] = useState<number | null>(null);
-  const [convD, setConvD] = useState<number | null>(null);
-  const [convResult, setConvResult] = useState<null | { p: string; g: string; h: string }>(null);
+  const [theme, setTheme] = useState<Theme>("auto");
+  const [fontFamily, setFontFamily] = useState<FontFamily>("vazirmatn");
+  const [fontSize, setFontSize] = useState<FontSize>("md");
 
-  // live clock, ticking once a second
+  // live clock, ticking once a second — also naturally rolls the date over
+  // at Tehran midnight since `now`/`todayPersian` below are re-derived each tick.
   useEffect(() => {
     const id = setInterval(() => setTick((t) => t + 1), 1000);
     return () => clearInterval(id);
   }, []);
 
+  // ---- settings: load from localStorage once, then keep in sync ----
   useEffect(() => {
-    const saved = typeof window !== "undefined" ? localStorage.getItem("roozegar-theme") : null;
-    if (saved) setDark(saved === "dark");
-    else if (typeof window !== "undefined") {
-      setDark(window.matchMedia("(prefers-color-scheme: dark)").matches);
+    try {
+      const t = localStorage.getItem("roozegar-theme") as Theme | null;
+      const f = localStorage.getItem("roozegar-font") as FontFamily | null;
+      const s = localStorage.getItem("roozegar-size") as FontSize | null;
+      if (t) setTheme(t);
+      if (f) setFontFamily(f);
+      if (s) setFontSize(s);
+    } catch {
+      // ignore
     }
   }, []);
 
   useEffect(() => {
-    document.documentElement.classList.toggle("dark", dark);
-    try {
-      localStorage.setItem("roozegar-theme", dark ? "dark" : "light");
-    } catch {
-      // ignore storage failures (private browsing etc.)
+    function resolveDark() {
+      if (theme === "auto") return window.matchMedia("(prefers-color-scheme: dark)").matches;
+      return theme === "dark";
     }
-  }, [dark]);
+    function apply() {
+      document.documentElement.classList.toggle("dark", resolveDark());
+    }
+    apply();
+    try {
+      localStorage.setItem("roozegar-theme", theme);
+    } catch {
+      // ignore
+    }
+    if (theme !== "auto") return;
+    const mq = window.matchMedia("(prefers-color-scheme: dark)");
+    mq.addEventListener("change", apply);
+    return () => mq.removeEventListener("change", apply);
+  }, [theme]);
+
+  useEffect(() => {
+    document.documentElement.setAttribute("data-font", fontFamily);
+    try {
+      localStorage.setItem("roozegar-font", fontFamily);
+    } catch {
+      // ignore
+    }
+  }, [fontFamily]);
+
+  useEffect(() => {
+    document.documentElement.setAttribute("data-size", fontSize);
+    try {
+      localStorage.setItem("roozegar-size", fontSize);
+    } catch {
+      // ignore
+    }
+  }, [fontSize]);
 
   const now = useMemo(() => tehranNow(), [tick]);
   const todayPersian = useMemo(() => calOf(now.anchor, "persian"), [now]);
@@ -71,14 +113,15 @@ export default function CalendarApp() {
     () => daysUntilNextNowruz(now.anchor, todayPersian.y),
     [now, todayPersian]
   );
+  const zodiac = useMemo(() => zodiacForPersianMonth(todayPersian.m), [todayPersian]);
+  const todaysOccasions = useMemo(() => occasionsForGregorianDate(now.anchor), [now]);
+  const couplet = useMemo(() => couplerOfTheDay(now.anchor), [now]);
 
   const viewYear = view?.y ?? todayPersian.y;
   const viewMonth = view?.m ?? todayPersian.m;
 
   useEffect(() => {
     if (!view) setView({ y: todayPersian.y, m: todayPersian.m });
-    if (convY === null) setConvY(todayPersian.y);
-    if (convM === null) setConvM(todayPersian.m);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [todayPersian.y, todayPersian.m]);
 
@@ -101,11 +144,13 @@ export default function CalendarApp() {
         outside: true,
         isToday: false,
         gLabel: null,
+        hLabel: null,
       });
     }
     for (let d = 1; d <= grid.daysInMonth; d++) {
       const gDate = new Date(grid.first.getTime() + (d - 1) * 86400000);
       const gInfo = { m: gDate.getUTCMonth() + 1, d: gDate.getUTCDate() };
+      const hInfo = calOf(gDate, "islamic-civil");
       const isToday = viewYear === todayPersian.y && viewMonth === todayPersian.m && d === todayPersian.d;
       result.push({
         day: d,
@@ -114,6 +159,7 @@ export default function CalendarApp() {
         outside: false,
         isToday,
         gLabel: `${gInfo.d} ${GREGORIAN_MONTHS[gInfo.m - 1].slice(0, 3)}`,
+        hLabel: `${toFa(hInfo.d)}`,
       });
     }
     const trailCount = (7 - (result.length % 7)) % 7;
@@ -124,7 +170,7 @@ export default function CalendarApp() {
       ny = viewYear + 1;
     }
     for (let t = 1; t <= trailCount; t++) {
-      result.push({ day: t, y: ny, m: nm, outside: true, isToday: false, gLabel: null });
+      result.push({ day: t, y: ny, m: nm, outside: true, isToday: false, gLabel: null, hLabel: null });
     }
     return result;
   }, [grid, viewYear, viewMonth, todayPersian]);
@@ -164,51 +210,9 @@ export default function CalendarApp() {
     return { dow, g, h };
   }, [selected]);
 
-  // ---- converter ----
-  const convMonthNames = monthNamesFor(convCal);
-  const convMaxDay = useMemo(() => {
-    if (convY === null || convM === null) return 31;
-    if (convCal === "gregorian") return daysInGregorianMonth(convY, convM);
-    try {
-      return monthGrid(convCal, convY, convM, 12).daysInMonth;
-    } catch {
-      return 30;
-    }
-  }, [convCal, convY, convM]);
-
-  useEffect(() => {
-    if (convD !== null && convD > convMaxDay) setConvD(convMaxDay);
-    if (convD === null) setConvD(1);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [convMaxDay]);
-
-  function defaultYearFor(calId: CalendarId) {
-    if (calId === "persian") return todayPersian.y;
-    if (calId === "islamic-civil") return todayHijri.y;
-    return todayGregorian.y;
-  }
-  function defaultMonthFor(calId: CalendarId) {
-    if (calId === "persian") return todayPersian.m;
-    if (calId === "islamic-civil") return todayHijri.m;
-    return todayGregorian.m;
-  }
-  function handleConvCalChange(calId: CalendarId) {
-    setConvCal(calId);
-    setConvY(defaultYearFor(calId));
-    setConvM(defaultMonthFor(calId));
-  }
-  function runConvert() {
-    if (convY === null || convM === null || convD === null) return;
-    const gdate = calToGregorian(convCal, convY, convM, convD);
-    const pp = calOf(gdate, "persian");
-    const gg = calOf(gdate, "gregorian");
-    const hh = calOf(gdate, "islamic-civil");
-    setConvResult({
-      p: `${toFa(pp.d)} ${monthNamesFor("persian")[pp.m - 1]} ${toFa(pp.y)}`,
-      g: `${gg.d} ${GREGORIAN_MONTHS[gg.m - 1]} ${gg.y}`,
-      h: `${toFa(hh.d)} ${monthNamesFor("islamic-civil")[hh.m - 1]} ${toFa(hh.y)}`,
-    });
-  }
+  const visibleOccasions: Occasion[] = todaysOccasions.filter(
+    (o) => o.bucket === "cultural" || showReligious
+  );
 
   return (
     <div className="app">
@@ -218,14 +222,14 @@ export default function CalendarApp() {
           <span className="brand-sub">تقویم فارسی</span>
         </div>
         <div className="header-actions">
-          <button
-            className="icon-btn"
-            title="پوسته تیره/روشن"
-            aria-label="تغییر پوسته"
-            onClick={() => setDark((d) => !d)}
-          >
-            {dark ? "◑" : "◐"}
-          </button>
+          <SettingsPanel
+            theme={theme}
+            setTheme={setTheme}
+            fontFamily={fontFamily}
+            setFontFamily={setFontFamily}
+            fontSize={fontSize}
+            setFontSize={setFontSize}
+          />
         </div>
       </header>
 
@@ -237,6 +241,10 @@ export default function CalendarApp() {
           {toFa(todayPersian.d)} {monthNamesFor("persian")[todayPersian.m - 1]} {toFa(todayPersian.y)}
         </div>
         <div className="hero-row">
+          <span className="hero-zodiac">
+            <ZodiacBadge sign={zodiac} size={22} />
+            <span className="zname">{zodiac.name}</span>
+          </span>
           <span>
             ساعت تهران <span className="clock">{now.hh}:{now.mm}:{now.ss}</span>
           </span>
@@ -252,6 +260,22 @@ export default function CalendarApp() {
           <div className="chip gold">
             {nowruz.days <= 0 ? "نوروز مبارک" : `${toFa(nowruz.days)} روز تا نوروز ${toFa(nowruz.year)}`}
           </div>
+        </div>
+
+        <div className="occasions">
+          {visibleOccasions.length > 0 ? (
+            visibleOccasions.map((o, i) => (
+              <div key={i} className={"occasion-row" + (o.holiday ? " holiday" : "")}>
+                <span className="occasion-dot" />
+                <span>{o.title}{o.holiday ? " (تعطیل)" : ""}</span>
+              </div>
+            ))
+          ) : (
+            <div className="occasions-empty">مناسبت ثبت‌شده‌ای برای امروز نیست.</div>
+          )}
+          <button className="occasions-toggle" onClick={() => setShowReligious((s) => !s)}>
+            {showReligious ? "پنهان‌کردن مناسبت‌های مذهبی و دولتی" : "نمایش مناسبت‌های مذهبی و دولتی"}
+          </button>
         </div>
       </section>
 
@@ -289,7 +313,12 @@ export default function CalendarApp() {
             }}
           >
             <div>{toFa(cell.day)}</div>
-            {!cell.outside && cell.gLabel && <div className="g">{cell.gLabel}</div>}
+            {!cell.outside && cell.gLabel && (
+              <div className="g">
+                <span>{cell.gLabel}</span>
+                {cell.hLabel && <span className="hij"> · {cell.hLabel}ق</span>}
+              </div>
+            )}
           </div>
         ))}
       </div>
@@ -307,55 +336,16 @@ export default function CalendarApp() {
         )}
       </div>
 
-      <div className="section-title">تبدیل تاریخ</div>
-      <div className="card">
-        <div className="conv-row">
-          <div className="field">
-            <label htmlFor="convCal">تقویم ورودی</label>
-            <select
-              id="convCal"
-              value={convCal}
-              onChange={(e) => handleConvCalChange(e.target.value as CalendarId)}
-            >
-              <option value="persian">شمسی</option>
-              <option value="gregorian">میلادی</option>
-              <option value="islamic-civil">قمری</option>
-            </select>
-          </div>
-          <div className="field">
-            <label htmlFor="convDay">روز</label>
-            <select id="convDay" value={convD ?? 1} onChange={(e) => setConvD(parseInt(e.target.value, 10))}>
-              {Array.from({ length: convMaxDay }, (_, i) => i + 1).map((d) => (
-                <option key={d} value={d}>{toFa(d)}</option>
-              ))}
-            </select>
-          </div>
-          <div className="field">
-            <label htmlFor="convMonth">ماه</label>
-            <select id="convMonth" value={convM ?? 1} onChange={(e) => setConvM(parseInt(e.target.value, 10))}>
-              {convMonthNames.map((name, idx) => (
-                <option key={name} value={idx + 1}>{name}</option>
-              ))}
-            </select>
-          </div>
-          <div className="field">
-            <label htmlFor="convYear">سال</label>
-            <input
-              id="convYear"
-              type="number"
-              value={convY ?? ""}
-              onChange={(e) => setConvY(parseInt(e.target.value, 10) || 0)}
-            />
-          </div>
-          <button className="btn-primary" onClick={runConvert}>تبدیل کن</button>
-        </div>
-        {convResult && (
-          <div className="conv-result">
-            <div className="cell"><div className="lbl">شمسی</div><div className="val">{convResult.p}</div></div>
-            <div className="cell"><div className="lbl">میلادی</div><div className="val">{convResult.g}</div></div>
-            <div className="cell"><div className="lbl">قمری</div><div className="val">{convResult.h}</div></div>
-          </div>
-        )}
+      <div className="section-title">ابزارهای تاریخ</div>
+      <DateTools />
+
+      <div className="section-title">اوقات شرعی</div>
+      <PrayerTimesCard />
+
+      <div className="section-title">آب‌وهوا و شعر روز</div>
+      <div className="widgets-row">
+        <WeatherCard />
+        <QuoteCard couplet={couplet} />
       </div>
 
       <footer>روزگار · یک تقویم ساده و بدون ردیابی، برای دیدن روزها</footer>

@@ -159,6 +159,53 @@ export function dayOfPersianYear(p: YMD): number {
   return doy;
 }
 
+export interface DateDiff {
+  totalDays: number;
+  years: number;
+  months: number;
+  days: number;
+  negative: boolean;
+}
+
+/**
+ * Calendar-aware difference between two dates (given in any of the three
+ * calendars), broken down into years/months/days using Persian-calendar
+ * month lengths — the natural breakdown for an age or interval shown next
+ * to a Jalali date.
+ */
+export function dateDiff(
+  startCal: CalendarId, sy: number, sm: number, sd: number,
+  endCal: CalendarId, ey: number, em: number, ed: number
+): DateDiff {
+  let gStart = calToGregorian(startCal, sy, sm, sd);
+  let gEnd = calToGregorian(endCal, ey, em, ed);
+  const negative = gStart.getTime() > gEnd.getTime();
+  if (negative) { const tmp = gStart; gStart = gEnd; gEnd = tmp; }
+
+  const totalDays = Math.round((gEnd.getTime() - gStart.getTime()) / 86400000);
+
+  const pStart = calOf(gStart, "persian");
+  const pEnd = calOf(gEnd, "persian");
+
+  let years = pEnd.y - pStart.y;
+  let months = pEnd.m - pStart.m;
+  let days = pEnd.d - pStart.d;
+
+  if (days < 0) {
+    months -= 1;
+    let borrowMonth = pEnd.m - 1;
+    let borrowYear = pEnd.y;
+    if (borrowMonth < 1) { borrowMonth = 12; borrowYear -= 1; }
+    days += monthGrid("persian", borrowYear, borrowMonth).daysInMonth;
+  }
+  if (months < 0) {
+    years -= 1;
+    months += 12;
+  }
+
+  return { totalDays, years, months, days, negative };
+}
+
 export function daysUntilNextNowruz(anchor: Date, currentPersianYear: number): { days: number; year: number } {
   const nextYear = currentPersianYear + 1;
   const nowruz = calToGregorian("persian", nextYear, 1, 1);
