@@ -7,14 +7,19 @@ export const metadata: Metadata = {
     "تقویم شمسی، میلادی و قمری. تقویم ماهانه، ابزار تبدیل تاریخ. بدون ثبت‌نام و بدون تبلیغات.",
 };
 
-// Applies the saved/preferred theme before paint, so there's no light-mode
-// flash for users whose system (or last choice) is dark.
+// Applies the saved appearance (theme, font size, font family) before paint,
+// so there's no flash of the default look.
 const themeInitScript = `
 (function(){
   try {
-    var saved = localStorage.getItem('roozegar-theme');
-    var dark = saved ? saved === 'dark' : window.matchMedia('(prefers-color-scheme: dark)').matches;
-    if (dark) document.documentElement.classList.add('dark');
+    var root = document.documentElement;
+    var theme = localStorage.getItem('roozegar-theme') || 'auto';
+    var dark = theme === 'dark' || (theme !== 'light' && window.matchMedia('(prefers-color-scheme: dark)').matches);
+    if (dark) root.classList.add('dark');
+    var size = localStorage.getItem('roozegar-font-size') || 'md';
+    root.classList.add('fs-' + (['sm','md','lg'].indexOf(size) >= 0 ? size : 'md'));
+    var family = localStorage.getItem('roozegar-font-family') || 'vazir';
+    root.classList.add('font-' + (['vazir','naskh','markazi'].indexOf(family) >= 0 ? family : 'vazir'));
   } catch (e) {}
 })();
 `;
