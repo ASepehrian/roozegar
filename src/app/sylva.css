@@ -1,0 +1,359 @@
+/* Sylva-inspired visual layer for Roozegar.
+   This intentionally uses the existing calendar markup so functionality stays intact.
+   It borrows the visual language of the reference: olive field, editorial type,
+   soft light pools, organic shapes, floating glass controls and a quiet dock. */
+
+:root {
+  --s-bg: #3f433b;
+  --s-bg-deep: #292d27;
+  --s-cream: #f0f1e8;
+  --s-soft: rgba(240, 241, 232, 0.68);
+  --s-faint: rgba(240, 241, 232, 0.42);
+  --s-line: rgba(255, 255, 255, 0.10);
+  --s-glass: rgba(30, 34, 29, 0.46);
+  --s-moss: #9eaa83;
+  --s-moss-bright: #d7dfc4;
+  --s-gold: #c6a66b;
+  --s-shadow: 0 30px 80px rgba(8, 11, 8, 0.30);
+}
+
+html,
+body {
+  background: var(--s-bg) !important;
+  color: var(--s-cream) !important;
+}
+
+body {
+  min-height: 100vh;
+  background:
+    radial-gradient(60rem 42rem at 18% 82%, rgba(222, 232, 203, 0.11), transparent 64%),
+    radial-gradient(46rem 34rem at 92% 8%, rgba(17, 22, 15, 0.34), transparent 68%),
+    linear-gradient(145deg, #4b5047 0%, #3b4038 48%, #30352e 100%) !important;
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: -18vh -12vw;
+  pointer-events: none;
+  z-index: -1;
+  opacity: .7;
+  background:
+    radial-gradient(30rem 18rem at 15% 85%, rgba(193, 210, 157, .13), transparent 70%),
+    radial-gradient(26rem 20rem at 85% 20%, rgba(19, 25, 18, .20), transparent 72%);
+  filter: blur(24px);
+}
+
+.app {
+  position: relative;
+  max-width: 1180px !important;
+  padding: 28px 28px 60px !important;
+}
+
+/* Header becomes the quiet floating dock from the reference. */
+header {
+  position: sticky;
+  top: 16px;
+  z-index: 50;
+  min-height: 64px;
+  padding: 10px 14px !important;
+  border: 1px solid var(--s-line) !important;
+  border-radius: 999px !important;
+  background: rgba(35, 39, 33, 0.60) !important;
+  backdrop-filter: blur(18px) saturate(120%);
+  -webkit-backdrop-filter: blur(18px) saturate(120%);
+  box-shadow: 0 14px 45px rgba(8, 11, 8, .16);
+}
+
+.brand,
+.brand-mark {
+  color: var(--s-cream) !important;
+}
+
+.brand-mark {
+  letter-spacing: .02em;
+}
+
+.icon-btn,
+.settings-btn,
+button {
+  border-color: var(--s-line) !important;
+}
+
+.icon-btn,
+.settings-btn {
+  background: rgba(255,255,255,.055) !important;
+  color: var(--s-cream) !important;
+  transition: transform .25s ease, background .25s ease, border-color .25s ease;
+}
+
+.icon-btn:hover,
+.settings-btn:hover {
+  transform: translateY(-2px);
+  background: rgba(255,255,255,.11) !important;
+  border-color: rgba(255,255,255,.20) !important;
+}
+
+.hero {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  min-height: 520px;
+  margin-top: 24px;
+  padding: 68px clamp(28px, 7vw, 92px) 62px !important;
+  border: 1px solid rgba(255,255,255,.07) !important;
+  border-radius: 38px !important;
+  box-shadow: var(--s-shadow);
+  background:
+    radial-gradient(52rem 30rem at 24% 90%, rgba(221, 231, 207, .20), transparent 64%),
+    radial-gradient(34rem 28rem at 82% 10%, rgba(17, 22, 15, .30), transparent 70%),
+    linear-gradient(145deg, #4b5047 0%, #3b4038 58%, #343931 100%) !important;
+}
+
+.hero::before {
+  content: "";
+  position: absolute;
+  width: 46vw;
+  height: 30vw;
+  min-width: 360px;
+  min-height: 250px;
+  left: -8vw;
+  bottom: -15vw;
+  border-radius: 52% 48% 64% 36% / 58% 38% 62% 42%;
+  background:
+    radial-gradient(circle at 55% 35%, rgba(223, 232, 208, .30), rgba(157, 173, 126, .11) 36%, transparent 69%);
+  filter: blur(10px);
+  transform: rotate(-9deg);
+  z-index: -1;
+}
+
+.hero::after {
+  content: "";
+  position: absolute;
+  width: 32rem;
+  height: 32rem;
+  right: -12rem;
+  bottom: -16rem;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(204, 217, 182, .14), transparent 68%);
+  filter: blur(8px);
+  z-index: -1;
+}
+
+.hero-date {
+  color: var(--s-cream) !important;
+  font-size: clamp(3.2rem, 8vw, 7.2rem) !important;
+  line-height: .95 !important;
+  letter-spacing: -.055em;
+  text-shadow: 0 14px 42px rgba(10, 14, 9, .22);
+}
+
+.hero-weekday,
+.hero-subtitle,
+.hero-extra,
+.hero-row {
+  color: var(--s-soft) !important;
+}
+
+.hero-weekday {
+  letter-spacing: .08em;
+}
+
+.hero-meta,
+.hero-row,
+.hero-extra {
+  position: relative;
+  z-index: 2;
+}
+
+.chip {
+  color: var(--s-cream) !important;
+  border: 1px solid var(--s-line) !important;
+  background: rgba(255,255,255,.055) !important;
+  box-shadow: none !important;
+  backdrop-filter: blur(10px);
+}
+
+.chip.gold {
+  color: #f0dfbd !important;
+  background: rgba(198,166,107,.14) !important;
+  border-color: rgba(198,166,107,.28) !important;
+}
+
+.zodiac-badge {
+  border-color: rgba(214, 225, 195, .22) !important;
+  background: rgba(214,225,195,.08) !important;
+  color: var(--s-moss-bright) !important;
+  box-shadow: 0 12px 30px rgba(8, 11, 8, .14);
+}
+
+.girih-divider {
+  opacity: .42;
+}
+
+.two-col {
+  gap: 20px !important;
+  margin-top: 20px !important;
+}
+
+.card,
+.selected-info,
+.date-tools,
+.prayer-card,
+.settings-panel,
+.calendar-section,
+.month-card {
+  border: 1px solid var(--s-line) !important;
+  background: rgba(31, 35, 30, .66) !important;
+  color: var(--s-cream) !important;
+  border-radius: 28px !important;
+  box-shadow: 0 22px 55px rgba(8, 11, 8, .16);
+  backdrop-filter: blur(18px) saturate(115%);
+  -webkit-backdrop-filter: blur(18px) saturate(115%);
+}
+
+.card:hover,
+.selected-info:hover,
+.date-tools:hover,
+.prayer-card:hover {
+  border-color: rgba(214,225,195,.18) !important;
+}
+
+.card-title,
+.section-title,
+.date-tools h2,
+.prayer-card h2 {
+  color: var(--s-cream) !important;
+}
+
+.card-label,
+.muted,
+.helper,
+.prayer-meta,
+.date-tools p {
+  color: var(--s-soft) !important;
+}
+
+.cal-nav {
+  margin-top: 22px;
+  padding: 14px 16px !important;
+  border: 1px solid var(--s-line) !important;
+  border-radius: 22px !important;
+  background: rgba(30,34,29,.60) !important;
+  backdrop-filter: blur(16px);
+}
+
+.cal-nav button,
+.nav-btn {
+  color: var(--s-cream) !important;
+  background: rgba(255,255,255,.05) !important;
+  border: 1px solid var(--s-line) !important;
+}
+
+.cal-nav button:hover,
+.nav-btn:hover {
+  background: rgba(255,255,255,.10) !important;
+}
+
+.day-cell {
+  border: 1px solid rgba(255,255,255,.065) !important;
+  background: rgba(245,246,237,.045) !important;
+  color: var(--s-cream) !important;
+  border-radius: 18px !important;
+  transition: transform .25s ease, background .25s ease, border-color .25s ease;
+}
+
+.day-cell:hover {
+  transform: translateY(-3px);
+  background: rgba(215,223,196,.10) !important;
+  border-color: rgba(215,223,196,.18) !important;
+}
+
+.day-cell.today,
+.day-cell.selected {
+  background: var(--s-moss-bright) !important;
+  color: #30362c !important;
+  border-color: transparent !important;
+  box-shadow: 0 12px 30px rgba(157,173,126,.18);
+}
+
+.day-cell .solar,
+.day-cell .gregorian,
+.day-cell .event {
+  color: inherit !important;
+}
+
+input,
+select,
+textarea {
+  color: var(--s-cream) !important;
+  background: rgba(255,255,255,.055) !important;
+  border-color: var(--s-line) !important;
+}
+
+select option {
+  background: #343931;
+  color: #f0f1e8;
+}
+
+.settings-panel {
+  background: rgba(35,39,33,.92) !important;
+}
+
+footer {
+  color: var(--s-faint) !important;
+}
+
+/* Give the calendar a subtle editorial grid, like the reference's guide lines. */
+.calendar-section::before,
+.month-card::before {
+  content: "";
+  display: block;
+  position: absolute;
+  pointer-events: none;
+}
+
+@media (max-width: 720px) {
+  .app {
+    padding: 16px 14px 38px !important;
+  }
+
+  header {
+    top: 8px;
+  }
+
+  .hero {
+    min-height: 440px;
+    margin-top: 14px;
+    padding: 50px 24px 44px !important;
+    border-radius: 28px !important;
+  }
+
+  .hero-date {
+    font-size: clamp(3rem, 17vw, 5.4rem) !important;
+  }
+
+  .two-col {
+    grid-template-columns: 1fr !important;
+  }
+
+  .card,
+  .selected-info,
+  .date-tools,
+  .prayer-card,
+  .calendar-section,
+  .month-card {
+    border-radius: 22px !important;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .hero::before {
+    animation: sylva-breathe 12s ease-in-out infinite alternate;
+  }
+}
+
+@keyframes sylva-breathe {
+  from { transform: translate3d(-1%, 0, 0) rotate(-9deg) scale(1); }
+  to { transform: translate3d(3%, -2%, 0) rotate(-5deg) scale(1.04); }
+}
