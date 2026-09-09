@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import "./sylva.css";
 
 export const metadata: Metadata = {
   title: "روزگار | تقویم فارسی",
