@@ -1,47 +1,46 @@
-/* Sylva-inspired visual layer for Roozegar.
-   This intentionally uses the existing calendar markup so functionality stays intact.
-   It borrows the visual language of the reference: olive field, editorial type,
-   soft light pools, organic shapes, floating glass controls and a quiet dock. */
+/* Roozegar — "Shirazi" visual layer.
+   Design language: warm paper background, deep forest-green hero with a
+   line-art Persian arch motif, white rounded cards, clay-red holidays,
+   Persian numerals everywhere, soft shadows, generous radii.
+   This file intentionally styles the existing markup — no functionality changes. */
 
 :root {
-  --s-bg: #3f433b;
-  --s-bg-deep: #292d27;
-  --s-cream: #f0f1e8;
-  --s-soft: rgba(240, 241, 232, 0.68);
-  --s-faint: rgba(240, 241, 232, 0.42);
-  --s-line: rgba(255, 255, 255, 0.10);
-  --s-glass: rgba(30, 34, 29, 0.46);
-  --s-moss: #9eaa83;
-  --s-moss-bright: #d7dfc4;
-  --s-gold: #c6a66b;
-  --s-shadow: 0 30px 80px rgba(8, 11, 8, 0.30);
+  --t-paper: #f7f8f4;
+  --t-surface: #ffffff;
+  --t-ink: #243e34;
+  --t-muted: #5c6a61;
+  --t-line: #e6eae3;
+  --t-forest: #214f40;
+  --t-forest-deep: #214f40;
+  --t-forest-ink: #eef2ee;
+  --t-forest-soft: #d9e3cf;
+  --t-leaf: #eaf0e6;
+  --t-lime: #c8d4a8;
+  --t-clay: #a9503b;
+  --t-sand: #f5eee1;
+  --t-holiday: #fce8e3;
+  --t-holiday-hover: #f9ded7;
+  --t-memorial: #1e2f28;
+  --t-memorial-muted: #b7c7bd;
+  --t-memorial-line: #35493f;
+  --t-radius: 28px;
+  --t-radius-sm: 12px;
+  --t-radius-md: 18px;
+  --t-shadow: 0 18px 44px rgba(30, 47, 40, 0.08);
+  --t-shadow-soft: 0 6px 18px rgba(30, 47, 40, 0.06);
 }
+
+/* ============ Page canvas ============ */
 
 html,
 body {
-  background: var(--s-bg) !important;
-  color: var(--s-cream) !important;
+  background: var(--t-paper) !important;
+  color: var(--t-ink) !important;
 }
 
 body {
   min-height: 100vh;
-  background:
-    radial-gradient(60rem 42rem at 18% 82%, rgba(222, 232, 203, 0.11), transparent 64%),
-    radial-gradient(46rem 34rem at 92% 8%, rgba(17, 22, 15, 0.34), transparent 68%),
-    linear-gradient(145deg, #4b5047 0%, #3b4038 48%, #30352e 100%) !important;
-}
-
-body::before {
-  content: "";
-  position: fixed;
-  inset: -18vh -12vw;
-  pointer-events: none;
-  z-index: -1;
-  opacity: .7;
-  background:
-    radial-gradient(30rem 18rem at 15% 85%, rgba(193, 210, 157, .13), transparent 70%),
-    radial-gradient(26rem 20rem at 85% 20%, rgba(19, 25, 18, .20), transparent 72%);
-  filter: blur(24px);
+  font-feature-settings: "ss01";
 }
 
 .app {
@@ -50,310 +49,700 @@ body::before {
   padding: 28px 28px 60px !important;
 }
 
-/* Header becomes the quiet floating dock from the reference. */
+/* ============ Floating header ============ */
+
 header {
   position: sticky;
-  top: 16px;
+  top: 14px;
   z-index: 50;
-  min-height: 64px;
-  padding: 10px 14px !important;
-  border: 1px solid var(--s-line) !important;
+  min-height: 62px;
+  padding: 10px 18px !important;
+  border: 1px solid var(--t-line) !important;
   border-radius: 999px !important;
-  background: rgba(35, 39, 33, 0.60) !important;
-  backdrop-filter: blur(18px) saturate(120%);
-  -webkit-backdrop-filter: blur(18px) saturate(120%);
-  box-shadow: 0 14px 45px rgba(8, 11, 8, .16);
-}
-
-.brand,
-.brand-mark {
-  color: var(--s-cream) !important;
+  background: rgba(255, 255, 255, 0.88) !important;
+  backdrop-filter: blur(16px) saturate(130%);
+  -webkit-backdrop-filter: blur(16px) saturate(130%);
+  box-shadow: var(--t-shadow-soft);
 }
 
 .brand-mark {
-  letter-spacing: .02em;
+  font-size: 1.55em !important;
+  color: var(--t-forest) !important;
+  letter-spacing: 0;
 }
 
-.icon-btn,
-.settings-btn,
-button {
-  border-color: var(--s-line) !important;
+.brand-sub {
+  color: var(--t-muted) !important;
 }
 
-.icon-btn,
-.settings-btn {
-  background: rgba(255,255,255,.055) !important;
-  color: var(--s-cream) !important;
-  transition: transform .25s ease, background .25s ease, border-color .25s ease;
+.header-dates {
+  color: var(--t-muted) !important;
+  font-variant-numeric: tabular-nums;
 }
 
-.icon-btn:hover,
-.settings-btn:hover {
-  transform: translateY(-2px);
-  background: rgba(255,255,255,.11) !important;
-  border-color: rgba(255,255,255,.20) !important;
+.icon-btn {
+  background: var(--t-surface) !important;
+  color: var(--t-muted) !important;
+  border: 1px solid var(--t-line) !important;
+  border-radius: 12px !important;
+  transition: transform 0.2s ease, border-color 0.2s ease, color 0.2s ease;
 }
+
+.icon-btn:hover {
+  transform: translateY(-1px);
+  border-color: var(--t-forest) !important;
+  color: var(--t-forest) !important;
+}
+
+/* Replace girih strip with a calm hairline (kept for structure) */
+.motif {
+  height: 8px !important;
+  opacity: 0.5;
+  margin-bottom: 10px;
+}
+
+/* ============ Hero: forest card with arch motif ============ */
 
 .hero {
   position: relative;
   isolation: isolate;
   overflow: hidden;
-  min-height: 520px;
-  margin-top: 24px;
-  padding: 68px clamp(28px, 7vw, 92px) 62px !important;
-  border: 1px solid rgba(255,255,255,.07) !important;
-  border-radius: 38px !important;
-  box-shadow: var(--s-shadow);
-  background:
-    radial-gradient(52rem 30rem at 24% 90%, rgba(221, 231, 207, .20), transparent 64%),
-    radial-gradient(34rem 28rem at 82% 10%, rgba(17, 22, 15, .30), transparent 70%),
-    linear-gradient(145deg, #4b5047 0%, #3b4038 58%, #343931 100%) !important;
+  margin-top: 20px;
+  padding: 40px 44px 44px !important;
+  border: none !important;
+  border-radius: var(--t-radius) !important;
+  background: linear-gradient(160deg, #24554564 0%, #214f40 38%, #1c4436 100%) !important;
+  background-color: var(--t-forest-deep) !important;
+  color: #fff !important;
+  box-shadow: 0 24px 60px rgba(30, 47, 40, 0.28);
 }
 
 .hero::before {
   content: "";
   position: absolute;
-  width: 46vw;
-  height: 30vw;
-  min-width: 360px;
-  min-height: 250px;
-  left: -8vw;
-  bottom: -15vw;
-  border-radius: 52% 48% 64% 36% / 58% 38% 62% 42%;
-  background:
-    radial-gradient(circle at 55% 35%, rgba(223, 232, 208, .30), rgba(157, 173, 126, .11) 36%, transparent 69%);
-  filter: blur(10px);
-  transform: rotate(-9deg);
+  inset: 0;
   z-index: -1;
-}
-
-.hero::after {
-  content: "";
-  position: absolute;
-  width: 32rem;
-  height: 32rem;
-  right: -12rem;
-  bottom: -16rem;
-  border-radius: 50%;
-  background: radial-gradient(circle, rgba(204, 217, 182, .14), transparent 68%);
-  filter: blur(8px);
-  z-index: -1;
-}
-
-.hero-date {
-  color: var(--s-cream) !important;
-  font-size: clamp(3.2rem, 8vw, 7.2rem) !important;
-  line-height: .95 !important;
-  letter-spacing: -.055em;
-  text-shadow: 0 14px 42px rgba(10, 14, 9, .22);
-}
-
-.hero-weekday,
-.hero-subtitle,
-.hero-extra,
-.hero-row {
-  color: var(--s-soft) !important;
-}
-
-.hero-weekday {
-  letter-spacing: .08em;
-}
-
-.hero-meta,
-.hero-row,
-.hero-extra {
-  position: relative;
-  z-index: 2;
-}
-
-.chip {
-  color: var(--s-cream) !important;
-  border: 1px solid var(--s-line) !important;
-  background: rgba(255,255,255,.055) !important;
-  box-shadow: none !important;
-  backdrop-filter: blur(10px);
-}
-
-.chip.gold {
-  color: #f0dfbd !important;
-  background: rgba(198,166,107,.14) !important;
-  border-color: rgba(198,166,107,.28) !important;
-}
-
-.zodiac-badge {
-  border-color: rgba(214, 225, 195, .22) !important;
-  background: rgba(214,225,195,.08) !important;
-  color: var(--s-moss-bright) !important;
-  box-shadow: 0 12px 30px rgba(8, 11, 8, .14);
-}
-
-.girih-divider {
-  opacity: .42;
-}
-
-.two-col {
-  gap: 20px !important;
-  margin-top: 20px !important;
-}
-
-.card,
-.selected-info,
-.date-tools,
-.prayer-card,
-.settings-panel,
-.calendar-section,
-.month-card {
-  border: 1px solid var(--s-line) !important;
-  background: rgba(31, 35, 30, .66) !important;
-  color: var(--s-cream) !important;
-  border-radius: 28px !important;
-  box-shadow: 0 22px 55px rgba(8, 11, 8, .16);
-  backdrop-filter: blur(18px) saturate(115%);
-  -webkit-backdrop-filter: blur(18px) saturate(115%);
-}
-
-.card:hover,
-.selected-info:hover,
-.date-tools:hover,
-.prayer-card:hover {
-  border-color: rgba(214,225,195,.18) !important;
-}
-
-.card-title,
-.section-title,
-.date-tools h2,
-.prayer-card h2 {
-  color: var(--s-cream) !important;
-}
-
-.card-label,
-.muted,
-.helper,
-.prayer-meta,
-.date-tools p {
-  color: var(--s-soft) !important;
-}
-
-.cal-nav {
-  margin-top: 22px;
-  padding: 14px 16px !important;
-  border: 1px solid var(--s-line) !important;
-  border-radius: 22px !important;
-  background: rgba(30,34,29,.60) !important;
-  backdrop-filter: blur(16px);
-}
-
-.cal-nav button,
-.nav-btn {
-  color: var(--s-cream) !important;
-  background: rgba(255,255,255,.05) !important;
-  border: 1px solid var(--s-line) !important;
-}
-
-.cal-nav button:hover,
-.nav-btn:hover {
-  background: rgba(255,255,255,.10) !important;
-}
-
-.day-cell {
-  border: 1px solid rgba(255,255,255,.065) !important;
-  background: rgba(245,246,237,.045) !important;
-  color: var(--s-cream) !important;
-  border-radius: 18px !important;
-  transition: transform .25s ease, background .25s ease, border-color .25s ease;
-}
-
-.day-cell:hover {
-  transform: translateY(-3px);
-  background: rgba(215,223,196,.10) !important;
-  border-color: rgba(215,223,196,.18) !important;
-}
-
-.day-cell.today,
-.day-cell.selected {
-  background: var(--s-moss-bright) !important;
-  color: #30362c !important;
-  border-color: transparent !important;
-  box-shadow: 0 12px 30px rgba(157,173,126,.18);
-}
-
-.day-cell .solar,
-.day-cell .gregorian,
-.day-cell .event {
-  color: inherit !important;
-}
-
-input,
-select,
-textarea {
-  color: var(--s-cream) !important;
-  background: rgba(255,255,255,.055) !important;
-  border-color: var(--s-line) !important;
-}
-
-select option {
-  background: #343931;
-  color: #f0f1e8;
-}
-
-.settings-panel {
-  background: rgba(35,39,33,.92) !important;
-}
-
-footer {
-  color: var(--s-faint) !important;
-}
-
-/* Give the calendar a subtle editorial grid, like the reference's guide lines. */
-.calendar-section::before,
-.month-card::before {
-  content: "";
-  display: block;
-  position: absolute;
+  opacity: 0.34;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 250 240' fill='none'%3E%3Cg stroke='%23b7c7a6' stroke-width='.8'%3E%3Cpath d='M30 232V121a95 95 0 0 1 190 0v111M43 232V121a82 82 0 0 1 164 0v111M56 232V121a69 69 0 0 1 138 0v111'/%3E%3Ccircle cx='125' cy='120' r='30'/%3E%3Ccircle cx='125' cy='120' r='24' stroke-dasharray='1 4'/%3E%3Cpath d='M125 78v-12m-3 8 3 4 3-4'/%3E%3Cpath d='M125 78v-12m-3 8 3 4 3-4' transform='rotate(45 125 120)'/%3E%3Cpath d='M125 78v-12m-3 8 3 4 3-4' transform='rotate(90 125 120)'/%3E%3Cpath d='M125 78v-12m-3 8 3 4 3-4' transform='rotate(135 125 120)'/%3E%3Cpath d='M125 78v-12m-3 8 3 4 3-4' transform='rotate(180 125 120)'/%3E%3Cpath d='M125 78v-12m-3 8 3 4 3-4' transform='rotate(225 125 120)'/%3E%3Cpath d='M125 78v-12m-3 8 3 4 3-4' transform='rotate(270 125 120)'/%3E%3Cpath d='M125 78v-12m-3 8 3 4 3-4' transform='rotate(315 125 120)'/%3E%3Cpath d='M18 176h214M18 185h214M18 194h214'/%3E%3C/g%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: bottom left -40px;
+  background-size: 380px auto;
   pointer-events: none;
 }
 
+@media (prefers-reduced-motion: no-preference) {
+  .hero::before {
+    animation: roozegar-drift 14s ease-in-out infinite alternate;
+  }
+}
+
+@keyframes roozegar-drift {
+  from { transform: translate(0, 0); }
+  to { transform: translate(-14px, 6px); }
+}
+
+.hero-weekday {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.92em !important;
+  font-weight: 500;
+  color: var(--t-forest-soft) !important;
+}
+
+.hero-weekday::before {
+  content: "";
+  width: 7px;
+  height: 7px;
+  border-radius: 99px;
+  background: var(--t-lime);
+  flex: none;
+}
+
+.hero-date {
+  color: #fff !important;
+  font-family: var(--font-body) !important;
+  font-size: clamp(2.4rem, 6vw, 4.2rem) !important;
+  font-weight: 600;
+  line-height: 1.25 !important;
+  letter-spacing: 0;
+  margin: 6px 0 14px !important;
+}
+
+.hero-row {
+  color: rgba(255, 255, 255, 0.82) !important;
+  font-size: 0.92em;
+  gap: 20px !important;
+}
+
+.hero-row strong {
+  color: #fff !important;
+  font-weight: 600;
+}
+
+.hero-row .zname {
+  color: var(--t-forest-soft);
+}
+
+.clock {
+  display: inline-block;
+  background: rgba(255, 255, 255, 0.10) !important;
+  border: 1px solid rgba(255, 255, 255, 0.16) !important;
+  color: #fff !important;
+  font-size: 1.35em;
+  font-weight: 500;
+  letter-spacing: 0.03em;
+  padding: 6px 18px !important;
+  border-radius: 14px !important;
+  backdrop-filter: blur(4px);
+}
+
+.hero-extra {
+  margin-top: 22px;
+  gap: 10px !important;
+}
+
+.chip {
+  background: rgba(255, 255, 255, 0.09) !important;
+  border: 1px solid rgba(255, 255, 255, 0.16) !important;
+  color: #fff !important;
+  border-radius: 99px !important;
+  padding: 8px 16px !important;
+  backdrop-filter: blur(6px);
+}
+
+.chip.gold {
+  background: rgba(200, 212, 168, 0.16) !important;
+  border-color: rgba(200, 212, 168, 0.34) !important;
+  color: #ecf2dc !important;
+}
+
+.today-occasions li {
+  color: var(--t-forest-soft) !important;
+}
+
+.today-occasions li.holiday {
+  color: #f4c9bd !important;
+}
+
+.today-occasions .cat {
+  background: rgba(255, 255, 255, 0.10) !important;
+  border-color: rgba(255, 255, 255, 0.18) !important;
+  color: rgba(255, 255, 255, 0.85) !important;
+}
+
+/* ============ Cards ============ */
+
+.card,
+.selected-info,
+.settings-panel {
+  border: 1px solid var(--t-line) !important;
+  background: var(--t-surface) !important;
+  color: var(--t-ink) !important;
+  border-radius: var(--t-radius) !important;
+  box-shadow: var(--t-shadow);
+  padding: 26px 28px !important;
+  transition: box-shadow 0.25s ease, border-color 0.25s ease;
+}
+
+.card:hover {
+  box-shadow: 0 22px 52px rgba(30, 47, 40, 0.11);
+  border-color: #dbe3d8 !important;
+}
+
+.two-col {
+  margin-top: 22px !important;
+  gap: 18px !important;
+}
+
+.section-title {
+  color: var(--t-muted) !important;
+  font-size: 0.8em;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  margin: 38px 0 14px;
+}
+
+.card-title {
+  color: var(--t-muted) !important;
+  font-weight: 600;
+}
+
+.poem .poet {
+  color: var(--t-clay) !important;
+}
+
+.poem-line {
+  color: var(--t-ink) !important;
+  font-size: 1.06em;
+  line-height: 2.1;
+}
+
+/* Weather */
+.weather-temp {
+  font-family: var(--font-body) !important;
+  font-weight: 700;
+  color: var(--t-forest) !important;
+}
+
+.weather-icon {
+  color: var(--t-clay) !important;
+}
+
+/* ============ Calendar ============ */
+
+.cal-nav {
+  padding: 4px 4px 14px !important;
+  border: none !important;
+  background: none !important;
+  backdrop-filter: none !important;
+  margin-bottom: 8px;
+}
+
+.cal-nav button {
+  background: var(--t-surface) !important;
+  border: 1px solid var(--t-line) !important;
+  color: var(--t-muted) !important;
+  border-radius: 12px !important;
+  padding: 8px 14px !important;
+  font-weight: 600;
+  box-shadow: var(--t-shadow-soft);
+  transition: transform 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+
+.cal-nav button:hover {
+  color: var(--t-forest) !important;
+  border-color: var(--t-forest) !important;
+  transform: translateY(-1px);
+}
+
+.cal-title {
+  color: var(--t-ink) !important;
+  font-weight: 700;
+  font-size: 1.15em;
+}
+
+.cal-title .yr {
+  color: var(--t-muted) !important;
+  font-weight: 500;
+}
+
+.cal-zodiac {
+  color: var(--t-forest) !important;
+}
+
+.weekday-row div {
+  color: var(--t-muted) !important;
+  font-size: 0.72em;
+  font-weight: 600;
+  padding: 6px 0 10px;
+}
+
+/* Friday column hint: last cell of weekday row (جمعه) */
+.weekday-row div:last-child {
+  color: var(--t-clay) !important;
+}
+
+.day-grid {
+  gap: 6px !important;
+}
+
+.day-cell {
+  aspect-ratio: auto !important;
+  min-height: 74px;
+  flex-direction: column;
+  gap: 3px;
+  border: 1px solid transparent !important;
+  background: var(--t-surface) !important;
+  border-radius: var(--t-radius-sm) !important;
+  color: var(--t-ink) !important;
+  font-size: 1em;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+  box-shadow: 0 1px 3px rgba(30, 47, 40, 0.05);
+  transition: transform 0.18s ease, background 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease;
+}
+
+.day-cell .d {
+  font-size: 1.15em;
+  line-height: 1.3;
+}
+
+.day-cell:hover {
+  transform: translateY(-2px);
+  border-color: var(--t-forest) !important;
+  box-shadow: 0 8px 20px rgba(30, 47, 40, 0.10);
+}
+
+.day-cell.outside {
+  background: transparent !important;
+  color: var(--t-muted);
+  opacity: 0.45;
+  box-shadow: none;
+}
+
+.day-cell .g,
+.day-cell .h {
+  color: var(--t-muted) !important;
+  opacity: 0.85;
+}
+
+.day-cell.today {
+  background: var(--t-forest-deep) !important;
+  border-color: var(--t-forest-deep) !important;
+  color: var(--t-forest-ink) !important;
+  box-shadow: 0 10px 26px rgba(33, 79, 64, 0.35);
+}
+
+.day-cell.today .g,
+.day-cell.today .h {
+  color: var(--t-memorial-muted) !important;
+}
+
+.day-cell.holiday {
+  background: var(--t-holiday) !important;
+  color: var(--t-clay) !important;
+}
+
+.day-cell.holiday:hover {
+  border-color: rgba(169, 80, 59, 0.45) !important;
+}
+
+.day-cell.today.holiday {
+  background: var(--t-clay) !important;
+  border-color: var(--t-clay) !important;
+  color: #fff !important;
+}
+
+.day-cell.selected {
+  border-color: var(--t-forest) !important;
+  border-width: 2px;
+}
+
+.day-cell.today.selected {
+  border-color: #fff !important;
+  outline: 2px solid var(--t-lime);
+  outline-offset: 2px;
+}
+
+.event-dot {
+  background: var(--t-forest) !important;
+  width: 5px !important;
+  height: 5px !important;
+  top: 7px !important;
+  inset-inline-start: 7px !important;
+}
+
+.day-cell.holiday .event-dot {
+  background: var(--t-clay) !important;
+}
+
+.day-cell.today .event-dot {
+  background: var(--t-lime) !important;
+}
+
+/* Legend row under the grid (selected info) */
+.selected-info {
+  background: var(--t-leaf) !important;
+  border-color: var(--t-line) !important;
+  box-shadow: none !important;
+  font-size: 0.9em;
+}
+
+.selected-info strong {
+  color: var(--t-forest) !important;
+}
+
+.selected-info .today-occasions li {
+  color: var(--t-ink) !important;
+}
+
+/* ============ Tools / forms ============ */
+
+.tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+
+.tab {
+  border: 1px solid var(--t-line) !important;
+  background: var(--t-paper) !important;
+  color: var(--t-muted) !important;
+  border-radius: 99px !important;
+  padding: 7px 16px !important;
+  font-family: inherit;
+  font-size: 0.86em;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.18s ease;
+}
+
+.tab:hover {
+  color: var(--t-forest) !important;
+  border-color: var(--t-forest) !important;
+}
+
+.tab.active {
+  background: var(--t-forest-deep) !important;
+  border-color: var(--t-forest-deep) !important;
+  color: #fff !important;
+}
+
+select,
+input[type="number"] {
+  background: var(--t-paper) !important;
+  border: 1px solid var(--t-line) !important;
+  color: var(--t-ink) !important;
+  border-radius: var(--t-radius-sm) !important;
+  padding: 9px 12px !important;
+}
+
+select:focus-visible,
+input:focus-visible {
+  outline: 2px solid var(--t-forest) !important;
+  outline-offset: 1px;
+}
+
+select option {
+  background: #fff;
+  color: var(--t-ink);
+}
+
+.field label {
+  color: var(--t-muted) !important;
+  font-weight: 600;
+}
+
+.btn-primary {
+  background: var(--t-forest-deep) !important;
+  border-radius: var(--t-radius-sm) !important;
+  padding: 10px 22px !important;
+  transition: transform 0.18s ease, box-shadow 0.18s ease;
+}
+
+.btn-primary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 20px rgba(33, 79, 64, 0.28);
+}
+
+.conv-result .cell {
+  background: var(--t-leaf) !important;
+  border-radius: var(--t-radius-md) !important;
+  padding: 12px 14px !important;
+}
+
+.conv-result .cell .lbl {
+  color: var(--t-muted) !important;
+}
+
+.conv-result .cell .val {
+  color: var(--t-ink) !important;
+}
+
+.tool-note {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--t-muted);
+  font-size: 0.85em;
+  margin-top: 12px;
+}
+
+/* Prayer times */
+.prayer-grid {
+  gap: 8px !important;
+}
+
+.prayer-item,
+.prayer-cell {
+  background: var(--t-paper) !important;
+  border: 1px solid var(--t-line) !important;
+  border-radius: var(--t-radius-md) !important;
+  padding: 11px 12px !important;
+}
+
+.prayer-item .label,
+.prayer-cell .lbl {
+  color: var(--t-muted) !important;
+}
+
+.prayer-item .time,
+.prayer-cell .val {
+  color: var(--t-ink) !important;
+  font-weight: 700;
+}
+
+/* Settings */
+.settings-overlay {
+  background: rgba(30, 47, 40, 0.30) !important;
+  backdrop-filter: blur(3px);
+}
+
+.settings-panel {
+  background: rgba(255, 255, 255, 0.96) !important;
+  border-radius: var(--t-radius) !important;
+  box-shadow: 0 28px 70px rgba(30, 47, 40, 0.22) !important;
+}
+
+.settings-row {
+  border-bottom-color: var(--t-line) !important;
+}
+
+.seg {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.seg-btn {
+  border: 1px solid var(--t-line) !important;
+  background: var(--t-paper) !important;
+  color: var(--t-muted) !important;
+  border-radius: 99px !important;
+  padding: 6px 14px !important;
+  font-family: inherit;
+  font-size: 0.82em;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.seg-btn:hover {
+  color: var(--t-forest) !important;
+  border-color: var(--t-forest) !important;
+}
+
+.seg-btn.active {
+  background: var(--t-forest-deep) !important;
+  border-color: var(--t-forest-deep) !important;
+  color: #fff !important;
+}
+
+.switch {
+  color: var(--t-muted) !important;
+  font-size: 0.85em;
+}
+
+/* Zodiac chip */
+.chip.zodiac-chip {
+  background: var(--t-leaf) !important;
+  border: 1px solid var(--t-line) !important;
+  color: var(--t-forest) !important;
+}
+
+/* ============ Dark theme (own take: memorial-night) ============ */
+
+html.dark {
+  --t-paper: #14211c;
+  --t-surface: #1b2b24;
+  --t-ink: #eef2ee;
+  --t-muted: #9aada2;
+  --t-line: #2c4237;
+  --t-forest: #7fb8a3;
+  --t-forest-deep: #122019;
+  --t-forest-ink: #eef2ee;
+  --t-forest-soft: #b7c7bd;
+  --t-leaf: #20332b;
+  --t-lime: #c8d4a8;
+  --t-clay: #d68a76;
+  --t-sand: #1b2b24;
+  --t-holiday: #33231f;
+  --t-holiday-hover: #3d2a24;
+  --t-memorial: #0f1a15;
+  --t-memorial-muted: #8ba296;
+  --t-memorial-line: #2c4237;
+  --t-shadow: 0 18px 44px rgba(0, 0, 0, 0.35);
+  --t-shadow-soft: 0 6px 18px rgba(0, 0, 0, 0.25);
+}
+
+html.dark .hero {
+  background: linear-gradient(160deg, #1c4436 0%, #16382d 55%, #122e25 100%) !important;
+}
+
+html.dark .day-cell {
+  box-shadow: none;
+}
+
+html.dark .day-cell.today {
+  background: var(--t-forest) !important;
+  border-color: var(--t-forest) !important;
+  color: #14211c !important;
+  box-shadow: 0 10px 26px rgba(127, 184, 163, 0.22);
+}
+
+html.dark .day-cell.today .g,
+html.dark .day-cell.today .h {
+  color: rgba(20, 33, 28, 0.75) !important;
+}
+
+html.dark .day-cell.today.holiday {
+  background: var(--t-clay) !important;
+  border-color: var(--t-clay) !important;
+  color: #14211c !important;
+}
+
+html.dark .selected-info {
+  background: var(--t-leaf) !important;
+}
+
+html.dark .selected-info strong {
+  color: #a9d3c3 !important;
+}
+
+html.dark .tab.active,
+html.dark .seg-btn.active,
+html.dark .btn-primary {
+  background: #2e5c4b !important;
+  border-color: #2e5c4b !important;
+}
+
+/* ============ Footer ============ */
+
+footer {
+  color: var(--t-muted) !important;
+  margin-top: 46px;
+  padding-top: 22px;
+  border-top: 1px solid var(--t-line);
+}
+
+/* ============ Responsive ============ */
+
 @media (max-width: 720px) {
   .app {
-    padding: 16px 14px 38px !important;
+    padding: 14px 14px 40px !important;
   }
 
   header {
     top: 8px;
+    padding: 8px 14px !important;
   }
 
   .hero {
-    min-height: 440px;
-    margin-top: 14px;
-    padding: 50px 24px 44px !important;
-    border-radius: 28px !important;
+    padding: 30px 24px 32px !important;
+    border-radius: 22px !important;
   }
 
-  .hero-date {
-    font-size: clamp(3rem, 17vw, 5.4rem) !important;
+  .hero::before {
+    background-size: 300px auto;
+  }
+
+  .card,
+  .selected-info {
+    border-radius: 22px !important;
+    padding: 20px !important;
+  }
+
+  .day-cell {
+    min-height: 60px;
   }
 
   .two-col {
     grid-template-columns: 1fr !important;
   }
 
-  .card,
-  .selected-info,
-  .date-tools,
-  .prayer-card,
-  .calendar-section,
-  .month-card {
-    border-radius: 22px !important;
+  .clock {
+    font-size: 1.1em;
   }
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .hero::before {
-    animation: sylva-breathe 12s ease-in-out infinite alternate;
-  }
-}
-
-@keyframes sylva-breathe {
-  from { transform: translate3d(-1%, 0, 0) rotate(-9deg) scale(1); }
-  to { transform: translate3d(3%, -2%, 0) rotate(-5deg) scale(1.04); }
 }
