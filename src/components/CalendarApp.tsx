@@ -151,14 +151,14 @@ export default function CalendarApp() {
     <section className="hero">
       <div className="hero-weekday">{weekdayOf(anchor)}</div>
       <div className="hero-split">
-        <div className="hero-date-block">
-          <div className="hero-date">{toFa(today.d)} {monthNamesFor("persian")[today.m - 1]} <span className="hero-year">{toFa(today.y)}</span></div>
-          <div className="hero-row"><span className="hero-zodiac"><ZodiacBadge zodiac={zodiac} size={22} /><span className="zname">{zodiac.name}</span></span><span>میلادی: <strong>{gregorian.d} {GREGORIAN_MONTHS[gregorian.m - 1]} {gregorian.y}</strong></span><span>قمری: <strong>{toFa(hijri.d)} {monthNamesFor("islamic-civil")[hijri.m - 1]} {toFa(hijri.y)}</strong></span></div>
-        </div>
         <div className="hero-clock-block">
           <div className="hero-clock-label">ساعت تهران</div>
           <div className="hero-clock">{mounted ? `${clock.hh}:${clock.mm}:${clock.ss}` : "--:--:--"}</div>
           <div className="hero-extra"><div className="chip">روز {toFa(dayOfPersianYear(today))} سال {toFa(today.y)}</div><div className="chip gold">{nowruz.days <= 0 ? "نوروز مبارک" : `${toFa(nowruz.days)} روز تا نوروز ${toFa(nowruz.year)}`}</div></div>
+        </div>
+        <div className="hero-date-block">
+          <div className="hero-date">{toFa(today.d)} {monthNamesFor("persian")[today.m - 1]} <span className="hero-year">{toFa(today.y)}</span></div>
+          <div className="hero-row"><span className="hero-zodiac"><ZodiacBadge zodiac={zodiac} size={22} /><span className="zname">{zodiac.name}</span></span><span>میلادی: <strong>{gregorian.d} {GREGORIAN_MONTHS[gregorian.m - 1]} {gregorian.y}</strong></span><span>قمری: <strong>{toFa(hijri.d)} {monthNamesFor("islamic-civil")[hijri.m - 1]} {toFa(hijri.y)}</strong></span></div>
         </div>
       </div>
       {occasions.length > 0 && <ul className="today-occasions">{occasions.map((o) => <li key={o.title} className={o.holiday ? "holiday" : ""}><span className={`cat cat-${o.category}`}>{CATEGORY_LABELS[o.category]}</span>{o.title}</li>)}</ul>}
