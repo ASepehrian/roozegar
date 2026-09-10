@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import GirihDivider from "./GirihDivider";
 import DateTools from "./DateTools";
+import MarketCard from "./MarketCard";
 import PoemCard from "./PoemCard";
 import PrayerTimesCard from "./PrayerTimesCard";
 import SettingsPanel from "./SettingsPanel";
@@ -149,17 +150,32 @@ export default function CalendarApp() {
     <GirihDivider />
     <section className="hero">
       <div className="hero-weekday">{weekdayOf(anchor)}</div>
-      <div className="hero-date">{toFa(today.d)} {monthNamesFor("persian")[today.m - 1]} {toFa(today.y)}</div>
-      <div className="hero-row"><span className="hero-zodiac"><ZodiacBadge zodiac={zodiac} size={22} /><span className="zname">{zodiac.name}</span></span><span>ساعت تهران <span className="clock">{mounted ? `${clock.hh}:${clock.mm}:${clock.ss}` : "--:--:--"}</span></span><span>میلادی: <strong>{gregorian.d} {GREGORIAN_MONTHS[gregorian.m - 1]} {gregorian.y}</strong></span><span>قمری: <strong>{toFa(hijri.d)} {monthNamesFor("islamic-civil")[hijri.m - 1]} {toFa(hijri.y)}</strong></span></div>
-      <div className="hero-extra"><div className="chip">روز {toFa(dayOfPersianYear(today))} سال {toFa(today.y)}</div><div className="chip gold">{nowruz.days <= 0 ? "نوروز مبارک" : `${toFa(nowruz.days)} روز تا نوروز ${toFa(nowruz.year)}`}</div></div>
+      <div className="hero-split">
+        <div className="hero-date-block">
+          <div className="hero-date">{toFa(today.d)} {monthNamesFor("persian")[today.m - 1]} <span className="hero-year">{toFa(today.y)}</span></div>
+          <div className="hero-row"><span className="hero-zodiac"><ZodiacBadge zodiac={zodiac} size={22} /><span className="zname">{zodiac.name}</span></span><span>میلادی: <strong>{gregorian.d} {GREGORIAN_MONTHS[gregorian.m - 1]} {gregorian.y}</strong></span><span>قمری: <strong>{toFa(hijri.d)} {monthNamesFor("islamic-civil")[hijri.m - 1]} {toFa(hijri.y)}</strong></span></div>
+        </div>
+        <div className="hero-clock-block">
+          <div className="hero-clock-label">ساعت تهران</div>
+          <div className="hero-clock">{mounted ? `${clock.hh}:${clock.mm}:${clock.ss}` : "--:--:--"}</div>
+          <div className="hero-extra"><div className="chip">روز {toFa(dayOfPersianYear(today))} سال {toFa(today.y)}</div><div className="chip gold">{nowruz.days <= 0 ? "نوروز مبارک" : `${toFa(nowruz.days)} روز تا نوروز ${toFa(nowruz.year)}`}</div></div>
+        </div>
+      </div>
       {occasions.length > 0 && <ul className="today-occasions">{occasions.map((o) => <li key={o.title} className={o.holiday ? "holiday" : ""}><span className={`cat cat-${o.category}`}>{CATEGORY_LABELS[o.category]}</span>{o.title}</li>)}</ul>}
     </section>
     <div className="two-col"><WeatherCard cityId={weatherCity} onCityChange={(id) => { setWeatherCity(id); store(STORAGE_KEYS.weatherCity, id); }} /><PoemCard couplet={couplet} /></div>
-    <div className="section-title">تقویم ماهانه</div>
-    <div className="cal-nav"><button onClick={prevMonth}>قبلی ›</button><div className="cal-title">{monthNamesFor("persian")[month - 1]} <span className="yr">{toFa(year)}</span><ZodiacBadge zodiac={monthZodiac} size={18} /></div><div className="nav-group"><button onClick={todayButton}>امروز</button><button onClick={nextMonth}>‹ بعدی</button></div></div>
-    <div className="weekday-row"><div>ش</div><div>ی</div><div>د</div><div>س</div><div>چ</div><div>پ</div><div>ج</div></div>
-    <div className="day-grid">{cells.map((cell, i) => <div key={`${cell.y}-${cell.m}-${cell.day}-${i}`} className={["day-cell", cell.outside ? "outside" : "", cell.isToday ? "today" : "", cell.holiday && !cell.outside ? "holiday" : "", selected && selected.y === cell.y && selected.m === cell.m && selected.d === cell.day ? "selected" : ""].join(" ").trim()} role="button" tabIndex={0} title={cell.occasions.map((o) => o.title).join(" · ") || undefined} onClick={() => cell.outside ? setView({ y: cell.y, m: cell.m }) : setSelected({ y: cell.y, m: cell.m, d: cell.day })} onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); cell.outside ? setView({ y: cell.y, m: cell.m }) : setSelected({ y: cell.y, m: cell.m, d: cell.day }); } }}><div className="d">{toFa(cell.day)}</div>{!cell.outside && <><div className="g">{cell.gLabel}</div><div className="h">{cell.hLabel}</div></>}{cell.occasions.length > 0 && <span className="event-dot" aria-hidden="true" />}</div>)}</div>
-    <div className="selected-info">{selected && selectedInfo ? <><div>{selectedInfo.dow}، <strong>{toFa(selected.d)} {monthNamesFor("persian")[selected.m - 1]} {toFa(selected.y)}</strong> — میلادی: <strong>{selectedInfo.g.d} {GREGORIAN_MONTHS[selectedInfo.g.m - 1]} {selectedInfo.g.y}</strong> — قمری: <strong>{toFa(selectedInfo.h.d)} {monthNamesFor("islamic-civil")[selectedInfo.h.m - 1]} {toFa(selectedInfo.h.y)}</strong></div><ZodiacBadge zodiac={selectedInfo.zodiac} size={20} />{selectedInfo.occasions.length > 0 && <ul className="today-occasions">{selectedInfo.occasions.map((o) => <li key={o.title}><span className={`cat cat-${o.category}`}>{CATEGORY_LABELS[o.category]}</span>{o.title}</li>)}</ul>}</> : "روی یک روز کلیک کن تا جزئیاتش را ببینی."}</div>
+    <div className="cal-market-row">
+      <div className="cal-side">
+        <div className="section-title">تقویم ماهانه</div>
+        <div className="cal-nav"><button onClick={prevMonth}>قبلی ›</button><div className="cal-title">{monthNamesFor("persian")[month - 1]} <span className="yr">{toFa(year)}</span><ZodiacBadge zodiac={monthZodiac} size={18} /></div><div className="nav-group"><button onClick={todayButton}>امروز</button><button onClick={nextMonth}>‹ بعدی</button></div></div>
+        <div className="weekday-row"><div>ش</div><div>ی</div><div>د</div><div>س</div><div>چ</div><div>پ</div><div>ج</div></div>
+        <div className="day-grid compact">{cells.map((cell, i) => <div key={`${cell.y}-${cell.m}-${cell.day}-${i}`} className={["day-cell", cell.outside ? "outside" : "", cell.isToday ? "today" : "", cell.holiday && !cell.outside ? "holiday" : "", selected && selected.y === cell.y && selected.m === cell.m && selected.d === cell.day ? "selected" : ""].join(" ").trim()} role="button" tabIndex={0} title={cell.occasions.map((o) => o.title).join(" · ") || undefined} onClick={() => cell.outside ? setView({ y: cell.y, m: cell.m }) : setSelected({ y: cell.y, m: cell.m, d: cell.day })} onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); cell.outside ? setView({ y: cell.y, m: cell.m }) : setSelected({ y: cell.y, m: cell.m, d: cell.day }); } }}><div className="d">{toFa(cell.day)}</div>{!cell.outside && <><div className="g">{cell.gLabel}</div><div className="h">{cell.hLabel}</div></>}{cell.occasions.length > 0 && <span className="event-dot" aria-hidden="true" />}</div>)}</div>
+        <div className="selected-info">{selected && selectedInfo ? <><div>{selectedInfo.dow}، <strong>{toFa(selected.d)} {monthNamesFor("persian")[selected.m - 1]} {toFa(selected.y)}</strong> — میلادی: <strong>{selectedInfo.g.d} {GREGORIAN_MONTHS[selectedInfo.g.m - 1]} {selectedInfo.g.y}</strong> — قمری: <strong>{toFa(selectedInfo.h.d)} {monthNamesFor("islamic-civil")[selectedInfo.h.m - 1]} {toFa(selectedInfo.h.y)}</strong></div><ZodiacBadge zodiac={selectedInfo.zodiac} size={20} />{selectedInfo.occasions.length > 0 && <ul className="today-occasions">{selectedInfo.occasions.map((o) => <li key={o.title}><span className={`cat cat-${o.category}`}>{CATEGORY_LABELS[o.category]}</span>{o.title}</li>)}</ul>}</> : "روی یک روز کلیک کن تا جزئیاتش را ببینی."}</div>
+      </div>
+      <div className="market-side">
+        <MarketCard />
+      </div>
+    </div>
     <div className="section-title">ابزارهای تاریخ</div><DateTools anchor={anchor} />
     <div className="section-title">اوقات شرعی</div><PrayerTimesCard anchor={anchor} cityId={prayerCity} method={prayerMethod} onCityChange={(id) => { setPrayerCity(id); store(STORAGE_KEYS.prayerCity, id); }} onMethodChange={(m) => { setPrayerMethod(m); store(STORAGE_KEYS.prayerMethod, m); }} />
     <footer>روزگار · یک تقویم ساده و بدون ردیابی، برای دیدن روزها</footer>
