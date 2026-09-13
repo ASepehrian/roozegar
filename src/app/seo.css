@@ -1,0 +1,24 @@
+/* SEO landing pages: readable, crawlable, lightweight content pages. */
+.seo-page{max-width:1100px;margin:0 auto;padding:48px 20px 80px;color:#17382f}
+.seo-nav{display:flex;justify-content:space-between;gap:16px;align-items:center;margin-bottom:48px}
+.seo-brand{font-weight:800;font-size:1.25rem;text-decoration:none;color:inherit}
+.seo-navlinks{display:flex;gap:16px;flex-wrap:wrap}
+.seo-navlinks a,.seo-link{color:#2f6654;text-decoration:none;font-weight:700}
+.seo-hero{padding:56px 0 40px;max-width:820px}
+.seo-kicker{font-size:.9rem;letter-spacing:.08em;opacity:.7}
+.seo-hero h1{font-size:clamp(2.2rem,6vw,4.8rem);line-height:1.08;margin:12px 0 20px}
+.seo-hero p{font-size:1.15rem;line-height:2;opacity:.82}
+.seo-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px;margin:28px 0 48px}
+.seo-card{padding:24px;border:1px solid rgba(23,56,47,.12);border-radius:24px;background:rgba(255,255,255,.62);box-shadow:0 12px 40px rgba(20,50,40,.06)}
+.seo-card h2,.seo-card h3{margin-top:0}
+.seo-card p{line-height:1.9;opacity:.78}
+.seo-section{margin:56px 0}
+.seo-section h2{font-size:1.8rem;margin-bottom:18px}
+.seo-list{line-height:2.2}
+.seo-calendar{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:8px}
+.seo-calendar div{min-height:72px;padding:10px;border-radius:14px;background:rgba(255,255,255,.7);border:1px solid rgba(23,56,47,.08)}
+.seo-calendar .head{min-height:auto;font-weight:800;background:#17382f;color:#fff}
+.seo-calendar .muted{opacity:.35}
+.seo-calendar .holiday{color:#9a3d35}
+.seo-footer{margin-top:72px;padding-top:24px;border-top:1px solid rgba(23,56,47,.12);opacity:.7}
+@media(max-width:700px){.seo-page{padding:28px 16px 60px}.seo-nav{align-items:flex-start}.seo-navlinks{display:none}.seo-calendar div{min-height:52px;padding:7px;font-size:.85rem}}
