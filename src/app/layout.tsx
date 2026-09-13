@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import "./sylva.css";
+import "./seo.css";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://www.qolet.ir"),
