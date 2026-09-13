@@ -1,6 +1,7 @@
+import type { ReactNode } from "react";
 import Link from "next/link";
 
-export default function SeoPage({children}:{children:React.ReactNode}){
+export default function SeoPage({children}:{children:ReactNode}){
   return <main className="seo-page">
     <nav className="seo-nav" aria-label="ناوبری">
       <Link className="seo-brand" href="/">روزگار</Link>
