@@ -72,13 +72,22 @@ const themeInitScript = `
 })();
 `;
 
+const websiteJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  name: "روزگار",
+  url: "https://www.qolet.ir/",
+  inLanguage: "fa-IR",
+  description: "تقویم فارسی، ساعت تهران، مناسبت‌ها، اوقات شرعی و ابزارهای تبدیل تاریخ.",
+};
+
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="fa" dir="rtl">
       <head>
         <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
       </head>
-      <body>{children}</body>
+      <body><script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd) }} />{children}</body>
     </html>
   );
 }
