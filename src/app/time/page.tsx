@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import SeoPage from "@/components/SeoPage";
 
 export const metadata: Metadata = {
