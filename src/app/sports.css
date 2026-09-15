@@ -1,0 +1,40 @@
+/* European leagues + dashboard composition */
+.cal-market-row{display:grid!important;grid-template-columns:minmax(0,1.35fr) minmax(360px,.95fr)!important;gap:18px!important;align-items:start!important;margin-top:10px!important}
+.cal-side{grid-column:1;grid-row:1;min-width:0}
+.market-side{grid-column:2;grid-row:1;min-width:0}
+.market-stack{display:grid;gap:18px}
+.football-card{background:var(--t-surface);border:1px solid var(--t-line);border-radius:var(--t-radius);box-shadow:var(--t-shadow);padding:22px 24px;overflow:hidden}
+.football-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:16px}
+.football-head>div{display:flex;align-items:center;gap:9px}
+.football-head h2{margin:0;font-size:1.05rem;color:var(--t-ink)}
+.football-ball{font-size:1.2rem}
+.football-more{font-size:.78rem;color:var(--t-muted);font-weight:600}
+.football-tabs{display:flex;gap:8px;margin-bottom:16px;flex-wrap:nowrap;direction:rtl}
+.football-tab{flex:1;min-width:0;border:1px solid var(--t-line);background:var(--t-paper);color:var(--t-muted);border-radius:14px;padding:10px 8px;font:inherit;font-size:.78rem;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;white-space:nowrap;transition:.18s ease}
+.football-tab:hover{border-color:var(--t-forest);color:var(--t-forest)}
+.football-tab.active{background:var(--t-forest-deep);border-color:var(--t-forest-deep);color:#fff;box-shadow:0 8px 20px rgba(33,79,64,.16)}
+.football-league-title{display:flex;align-items:center;justify-content:space-between;color:var(--t-ink);font-size:.9rem;padding:4px 2px 10px}
+.football-league-title span{color:var(--t-muted)}
+.football-list{border:1px solid var(--t-line);border-radius:16px;overflow:hidden}
+.football-match{display:grid;grid-template-columns:1fr 82px 1fr;align-items:center;gap:8px;padding:11px 12px;border-bottom:1px solid var(--t-line);min-height:60px}
+.football-match:last-child{border-bottom:0}
+.football-team{display:flex;align-items:center;gap:7px;font-size:.76rem;color:var(--t-ink);min-width:0}
+.football-team span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.football-team img{width:24px;height:24px;object-fit:contain;flex:none}
+.football-team.away{justify-content:flex-start}
+.football-team.home{justify-content:flex-end;text-align:right}
+.football-score{text-align:center;display:flex;flex-direction:column;gap:2px;line-height:1.25}
+.football-score strong{font-size:.92rem;color:var(--t-ink);font-variant-numeric:tabular-nums}
+.football-score small{font-size:.65rem;color:var(--t-muted)}
+.football-score small.live{color:#1d7a4f;font-weight:800}
+.football-time{font-size:.78rem;color:var(--t-muted);font-weight:700}
+.football-empty{padding:24px;text-align:center;color:var(--t-muted);font-size:.82rem}
+.football-footer{margin-top:12px;background:var(--t-leaf);border-radius:14px;padding:10px 12px;text-align:center;color:var(--t-forest);font-size:.76rem;font-weight:700}
+/* Make the date tools compact like the reference composition. */
+.app>.section-title + .card{max-width:calc(100% - 34%);margin-inline-start:34%;padding:18px 20px!important;border-radius:22px!important}
+.app>.section-title + .card .tabs{margin-bottom:10px}
+.app>.section-title + .card .tab{padding:6px 13px!important;font-size:.8rem}
+.app>.section-title + .card .conv-result{gap:7px;margin-top:10px}
+.app>.section-title + .card .conv-result .cell{padding:8px 10px!important}
+@media(max-width:900px){.cal-market-row{grid-template-columns:1fr!important}.cal-side,.market-side{grid-column:1;grid-row:auto}.app>.section-title + .card{max-width:none;margin-inline-start:0}}
+@media(max-width:560px){.football-card{padding:18px 14px}.football-tabs{gap:5px}.football-tab{font-size:.7rem;padding:9px 5px}.football-match{grid-template-columns:1fr 64px 1fr;padding:9px 7px}.football-team{font-size:.68rem}.football-team img{width:20px;height:20px}.app>.section-title + .card{padding:16px!important}}
