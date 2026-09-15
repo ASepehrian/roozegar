@@ -22,13 +22,23 @@ const LEAGUES: Array<{ id: League; label: string; icon: string }> = [
   { id: "ita", label: "سری آ ایتالیا", icon: "🇮🇹" },
 ];
 
+function logoSrc(url: string | null) {
+  return url ? `/api/football/logo?url=${encodeURIComponent(url)}` : null;
+}
+
+function Logo({ url, className }: { url: string | null; className?: string }) {
+  const src = logoSrc(url);
+  if (!src) return null;
+  return <img className={className} src={src} alt="" loading="lazy" decoding="async" onError={(event) => { event.currentTarget.style.display = "none"; }} />;
+}
+
 function MatchRow({ match }: { match: Match }) {
   const time = new Intl.DateTimeFormat("fa-IR", { hour: "2-digit", minute: "2-digit", timeZone: "Asia/Tehran" }).format(new Date(match.date));
   const status = match.state === "post" ? "پایان" : match.state === "in" ? match.detail || "زنده" : time;
   return <div className="football-match">
-    <div className="football-team home"><span>{match.home.name}</span>{match.home.logo && <img src={match.home.logo} alt="" loading="lazy" />}</div>
+    <div className="football-team home"><span>{match.home.name}</span><Logo url={match.home.logo} /></div>
     <div className="football-score">{match.state === "pre" ? <span className="football-time">{status}</span> : <strong>{toFa(Number(match.home.score ?? 0))} - {toFa(Number(match.away.score ?? 0))}</strong>}<small className={match.state === "in" ? "live" : ""}>{status}</small></div>
-    <div className="football-team away">{match.away.logo && <img src={match.away.logo} alt="" loading="lazy" />}<span>{match.away.name}</span></div>
+    <div className="football-team away"><Logo url={match.away.logo} /><span>{match.away.name}</span></div>
   </div>;
 }
 
@@ -72,7 +82,7 @@ export default function FootballResults() {
     <div className="football-list">{loading ? <div className="football-empty">در حال دریافت نتایج…</div> : data?.matches?.length ? data.matches.slice(0, 6).map((match) => <MatchRow key={match.id} match={match} />) : <div className="football-empty">نتیجه‌ای برای نمایش پیدا نشد.</div>}</div>
     <button className="football-footer" type="button" onClick={openTable}>{showTable ? "بستن جدول" : `مشاهده جدول کامل ${data?.name || "لیگ"}`} <span>{showTable ? "⌃" : "‹"}</span></button>
     {showTable && <div className="football-standings">
-      {tableLoading ? <div className="football-empty">در حال دریافت جدول…</div> : standings?.standings?.length ? <div className="football-table-wrap"><table><thead><tr><th>#</th><th>تیم</th><th>بازی</th><th>برد</th><th>مساوی</th><th>باخت</th><th>تفاضل</th><th>امتیاز</th></tr></thead><tbody>{standings.standings.map((row) => <tr key={`${row.rank}-${row.team}`}><td>{toFa(row.rank)}</td><td><span className="football-table-team">{row.logo && <img src={row.logo} alt="" loading="lazy" />}{row.team}</span></td><td>{toFa(row.played)}</td><td>{toFa(row.wins)}</td><td>{toFa(row.draws)}</td><td>{toFa(row.losses)}</td><td>{toFa(row.goalDifference)}</td><td><strong>{toFa(row.points)}</strong></td></tr>)}</tbody></table></div> : <div className="football-empty">جدول این لیگ در دسترس نیست.</div>}
+      {tableLoading ? <div className="football-empty">در حال دریافت جدول…</div> : standings?.standings?.length ? <div className="football-table-wrap"><table><thead><tr><th>#</th><th>تیم</th><th>بازی</th><th>برد</th><th>مساوی</th><th>باخت</th><th>تفاضل</th><th>امتیاز</th></tr></thead><tbody>{standings.standings.map((row) => <tr key={`${row.rank}-${row.team}`}><td>{toFa(row.rank)}</td><td><span className="football-table-team"><Logo url={row.logo} />{row.team}</span></td><td>{toFa(row.played)}</td><td>{toFa(row.wins)}</td><td>{toFa(row.draws)}</td><td>{toFa(row.losses)}</td><td>{toFa(row.goalDifference)}</td><td><strong>{toFa(row.points)}</strong></td></tr>)}</tbody></table></div> : <div className="football-empty">جدول این لیگ در دسترس نیست.</div>}
     </div>}
   </section>;
 }
