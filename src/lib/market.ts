@@ -39,15 +39,21 @@ export async function fetchMarket(signal?: AbortSignal): Promise<MarketNow> {
   return data as MarketNow;
 }
 
-export async function fetchCryptoPrices(signal?: AbortSignal): Promise<Record<"BTCUSDT" | "ETHUSDT", CryptoPrice>> {
+export async function fetchCryptoPrices(
+  signal?: AbortSignal
+): Promise<Partial<Record<"BTCUSDT" | "ETHUSDT", CryptoPrice>>> {
   const res = await fetch(CRYPTO_ENDPOINT, { signal, cache: "no-store" });
   if (!res.ok) throw new Error(`crypto request failed: ${res.status}`);
   const data = await res.json() as { prices?: Array<{ symbol: string; price: number }> };
   const prices = data.prices ?? [];
-  const btc = prices.find((item) => item.symbol === "BTCUSDT");
-  const eth = prices.find((item) => item.symbol === "ETHUSDT");
-  if (!btc || !eth) throw new Error("crypto response missing prices");
-  return { BTCUSDT: { price: btc.price }, ETHUSDT: { price: eth.price } };
+  const result: Partial<Record<"BTCUSDT" | "ETHUSDT", CryptoPrice>> = {};
+  for (const item of prices) {
+    if ((item.symbol === "BTCUSDT" || item.symbol === "ETHUSDT") && Number.isFinite(item.price) && item.price > 0) {
+      result[item.symbol] = { price: item.price };
+    }
+  }
+  if (!result.BTCUSDT && !result.ETHUSDT) throw new Error("crypto response missing prices");
+  return result;
 }
 
 export function formatToman(v: number): string {
