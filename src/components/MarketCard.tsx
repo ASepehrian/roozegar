@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { MarketNow, fetchMarket, formatToman } from "@/lib/market";
+import { MarketNow, fetchCryptoPrices, fetchMarket, formatCryptoPrice, formatToman } from "@/lib/market";
 import { toFa } from "@/lib/calendar";
 import FootballResults from "./FootballResults";
 
@@ -19,6 +19,15 @@ function RateRow({ label, toman, change, rising, prevToman }: { label: string; t
   );
 }
 
+function CryptoRow({ symbol, price }: { symbol: string; price: number }) {
+  return (
+    <div className="rate-row crypto-rate-row">
+      <span className="rate-label">{symbol}</span>
+      <span className="rate-main">{formatCryptoPrice(price)}<span className="rate-unit">USDT</span></span>
+    </div>
+  );
+}
+
 function secondsAgo(ts: number): string {
   const s = Math.max(0, Math.round((Date.now() - ts) / 1000));
   if (s < 5) return "همین حالا";
@@ -28,8 +37,10 @@ function secondsAgo(ts: number): string {
 export default function MarketCard() {
   const [data, setData] = useState<MarketNow | null>(null);
   const [prev, setPrev] = useState<MarketNow | null>(null);
+  const [crypto, setCrypto] = useState<{ BTCUSDT: { price: number }; ETHUSDT: { price: number } } | null>(null);
   const [error, setError] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [cryptoLoading, setCryptoLoading] = useState(true);
   const [, setTick] = useState(0);
 
   useEffect(() => {
@@ -45,10 +56,17 @@ export default function MarketCard() {
         })
         .catch(() => { setError(true); setLoading(false); });
     };
+    const loadCrypto = () => {
+      fetchCryptoPrices()
+        .then((prices) => { setCrypto(prices); setCryptoLoading(false); })
+        .catch(() => setCryptoLoading(false));
+    };
     load();
+    loadCrypto();
     const id = window.setInterval(load, 30 * 1000);
+    const cryptoId = window.setInterval(loadCrypto, 10 * 1000);
     const tickId = window.setInterval(() => setTick((n) => n + 1), 5000);
-    return () => { window.clearInterval(id); window.clearInterval(tickId); };
+    return () => { window.clearInterval(id); window.clearInterval(cryptoId); window.clearInterval(tickId); };
   }, []);
 
   return <div className="market-stack">
@@ -64,7 +82,12 @@ export default function MarketCard() {
         <RateRow label="دلار آمریکا" toman={data.usdToman.toman} change={data.usdToman.change} rising={data.usdToman.rising} prevToman={prev?.usdToman.toman ?? 0} />
         <RateRow label="طلای ۱۸ عیار" toman={data.gold18Toman.toman} change={data.gold18Toman.change} rising={data.gold18Toman.rising} prevToman={prev?.gold18Toman.toman ?? 0} />
         <RateRow label="سکه امامی" toman={data.emamiCoinToman.toman} change={data.emamiCoinToman.change} rising={data.emamiCoinToman.rising} prevToman={prev?.emamiCoinToman.toman ?? 0} />
-        <div className="muted small-inline">به‌روزرسانی خودکار هر ۳۰ ثانیه · قیمت‌ها اطلاع‌رسانی است و مبنای معامله نیست.</div>
+        {cryptoLoading && !crypto && <div className="muted small-inline">در حال دریافت قیمت BTC و ETH…</div>}
+        {crypto && <>
+          <CryptoRow symbol="BTC" price={crypto.BTCUSDT.price} />
+          <CryptoRow symbol="ETH" price={crypto.ETHUSDT.price} />
+        </>}
+        <div className="muted small-inline">به‌روزرسانی ارز و طلا هر ۳۰ ثانیه · BTC/ETH هر ۱۰ ثانیه · قیمت‌ها اطلاع‌رسانی است و مبنای معامله نیست.</div>
       </>}
     </div>
     <FootballResults />
