@@ -15,6 +15,10 @@ export interface MarketRate {
   rising: boolean;
 }
 
+export interface CryptoPrice {
+  price: number;
+}
+
 export interface MarketNow {
   usdToman: MarketRate;
   gold18Toman: MarketRate;
@@ -23,6 +27,7 @@ export interface MarketNow {
 }
 
 const ENDPOINT = "/api/market";
+const CRYPTO_ENDPOINT = "/api/crypto-price";
 
 export async function fetchMarket(signal?: AbortSignal): Promise<MarketNow> {
   const res = await fetch(ENDPOINT, { signal, cache: "no-store" });
@@ -34,7 +39,23 @@ export async function fetchMarket(signal?: AbortSignal): Promise<MarketNow> {
   return data as MarketNow;
 }
 
+export async function fetchCryptoPrices(signal?: AbortSignal): Promise<Record<"BTCUSDT" | "ETHUSDT", CryptoPrice>> {
+  const res = await fetch(CRYPTO_ENDPOINT, { signal, cache: "no-store" });
+  if (!res.ok) throw new Error(`crypto request failed: ${res.status}`);
+  const data = await res.json() as { prices?: Array<{ symbol: string; price: number }> };
+  const prices = data.prices ?? [];
+  const btc = prices.find((item) => item.symbol === "BTCUSDT");
+  const eth = prices.find((item) => item.symbol === "ETHUSDT");
+  if (!btc || !eth) throw new Error("crypto response missing prices");
+  return { BTCUSDT: { price: btc.price }, ETHUSDT: { price: eth.price } };
+}
+
 export function formatToman(v: number): string {
   return Math.round(v).toLocaleString("en-US");
 }
 
+export function formatCryptoPrice(v: number): string {
+  return v >= 1000
+    ? v.toLocaleString("en-US", { maximumFractionDigits: 2 })
+    : v.toLocaleString("en-US", { maximumFractionDigits: 4 });
+}
