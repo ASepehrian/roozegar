@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import "./sylva.css";
 import "./seo.css";
+import "./sports.css";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://www.qolet.ir"),
@@ -24,39 +25,27 @@ export const metadata: Metadata = {
     "اوقات شرعی",
     "تبدیل تاریخ",
   ],
-  alternates: {
-    canonical: "/",
-  },
+  alternates: { canonical: "/" },
   openGraph: {
     type: "website",
     url: "https://www.qolet.ir/",
     siteName: "روزگار",
     locale: "fa_IR",
     title: "روزگار | تقویم فارسی، ساعت و تاریخ امروز",
-    description:
-      "تقویم شمسی، میلادی و قمری، ساعت تهران، مناسبت‌ها، اوقات شرعی و ابزارهای تاریخ در یک صفحه.",
+    description: "تقویم شمسی، میلادی و قمری، ساعت تهران، مناسبت‌ها، اوقات شرعی و ابزارهای تاریخ در یک صفحه.",
   },
   twitter: {
     card: "summary_large_image",
     title: "روزگار | تقویم فارسی، ساعت و تاریخ امروز",
-    description:
-      "تقویم شمسی، میلادی و قمری، ساعت تهران، مناسبت‌ها، اوقات شرعی و ابزارهای تاریخ.",
+    description: "تقویم شمسی، میلادی و قمری، ساعت تهران، مناسبت‌ها، اوقات شرعی و ابزارهای تاریخ.",
   },
   robots: {
     index: true,
     follow: true,
-    googleBot: {
-      index: true,
-      follow: true,
-      "max-image-preview": "large",
-      "max-snippet": -1,
-      "max-video-preview": -1,
-    },
+    googleBot: { index: true, follow: true, "max-image-preview": "large", "max-snippet": -1, "max-video-preview": -1 },
   },
 };
 
-// Applies the saved appearance (theme, font size, font family) before paint,
-// so there's no flash of the default look.
 const themeInitScript = `
 (function(){
   try {
@@ -84,9 +73,7 @@ const websiteJsonLd = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="fa" dir="rtl">
-      <head>
-        <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
-      </head>
+      <head><script dangerouslySetInnerHTML={{ __html: themeInitScript }} /></head>
       <body><script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd) }} />{children}</body>
     </html>
   );
