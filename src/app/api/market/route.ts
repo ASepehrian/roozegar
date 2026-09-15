@@ -1,57 +1,82 @@
-// Source: roozegar market rates proxy route
-// Why: the tgju.org public feed serves no CORS headers, so a browser fetch
-//      from the deployed site is blocked. This server-side route fetches
-//      the same public feed (no API key, stateless) and returns only the
-//      three rates the market card needs, as Toman.
+// Source: roozegar live market rates proxy route
+// The browser cannot reliably call the public TGJU feed directly because of CORS,
+// so this server route fetches it and returns the three rates used by the card.
 
 import { NextResponse } from "next/server";
 
-const FEED = "https://call1.tgju.org/ajax.json";
+const FEEDS = [
+  "https://call1.tgju.org/ajax.json",
+  "https://call5.tgju.org/ajax.json",
+  "https://call3.tgju.org/ajax.json",
+];
+
 const KEYS = {
   usdToman: "price_dollar_rl",
   gold18Toman: "geram18",
   emamiCoinToman: "sekee",
 } as const;
 
-function num(v: unknown): number {
+type FeedData = { current?: Record<string, Record<string, unknown>> };
+
+function toNumber(v: unknown): number {
+  if (typeof v === "number") return Number.isFinite(v) ? v : NaN;
   if (typeof v !== "string") return NaN;
-  return parseInt(v.replace(/,/g, ""), 10);
+  const normalized = v
+    .replace(/[۰-۹]/g, (d) => String("۰۱۲۳۴۵۶۷۸۹".indexOf(d)))
+    .replace(/[٬,]/g, "")
+    .replace(/٪/g, "")
+    .trim();
+  return Number(normalized);
 }
 
 function rate(entry: Record<string, unknown> | undefined) {
   if (!entry) return null;
-  const rial = num(entry.p);
-  if (!Number.isFinite(rial)) return null;
-  const deltaRial = num(entry.d);
+  const rial = toNumber(entry.p);
+  if (!Number.isFinite(rial) || rial <= 0) return null;
+  const deltaRial = toNumber(entry.d);
+  const percent = toNumber(entry.dp);
   return {
     toman: rial / 10,
     change: Number.isFinite(deltaRial) ? deltaRial / 10 : 0,
-    changePercent: typeof entry.dp === "number" ? entry.dp : 0,
+    changePercent: Number.isFinite(percent) ? percent : 0,
     rising: entry.dt === "high" || (Number.isFinite(deltaRial) && deltaRial > 0),
   };
+}
+
+async function fetchFeed(url: string): Promise<FeedData> {
+  const res = await fetch(url, {
+    cache: "no-store",
+    headers: { Accept: "application/json", "User-Agent": "qolet.ir live market" },
+    signal: AbortSignal.timeout(5000),
+  });
+  if (!res.ok) throw new Error(`market feed failed: ${res.status}`);
+  return (await res.json()) as FeedData;
 }
 
 export const dynamic = "force-dynamic";
 
 export async function GET() {
-  try {
-    const res = await fetch(FEED, { next: { revalidate: 0 }, cache: "no-store" });
-    if (!res.ok) {
-      return NextResponse.json({ error: "feed_unavailable" }, { status: 502 });
+  let lastError: unknown;
+  for (const feed of FEEDS) {
+    try {
+      const data = await fetchFeed(feed);
+      const current = data.current;
+      const usdToman = rate(current?.[KEYS.usdToman]);
+      const gold18Toman = rate(current?.[KEYS.gold18Toman]);
+      const emamiCoinToman = rate(current?.[KEYS.emamiCoinToman]);
+      if (!usdToman || !gold18Toman || !emamiCoinToman) throw new Error("feed_incomplete");
+
+      return NextResponse.json(
+        { usdToman, gold18Toman, emamiCoinToman, fetchedAt: Date.now() },
+        { headers: { "Cache-Control": "no-store, max-age=0, must-revalidate" } }
+      );
+    } catch (error) {
+      lastError = error;
     }
-    const data = (await res.json()) as { current?: Record<string, Record<string, unknown>> };
-    const current = data.current;
-    const usdToman = rate(current?.[KEYS.usdToman]);
-    const gold18Toman = rate(current?.[KEYS.gold18Toman]);
-    const emamiCoinToman = rate(current?.[KEYS.emamiCoinToman]);
-    if (!usdToman || !gold18Toman || !emamiCoinToman) {
-      return NextResponse.json({ error: "feed_incomplete" }, { status: 502 });
-    }
-    return NextResponse.json(
-      { usdToman, gold18Toman, emamiCoinToman, fetchedAt: Date.now() },
-      { headers: { "Cache-Control": "no-store" } }
-    );
-  } catch {
-    return NextResponse.json({ error: "feed_failed" }, { status: 502 });
   }
+
+  return NextResponse.json(
+    { error: "market_feed_failed" },
+    { status: 502, headers: { "Cache-Control": "no-store, max-age=0, must-revalidate" } }
+  );
 }
