@@ -1,9 +1,11 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { MarketNow, fetchCryptoPrices, fetchMarket, formatCryptoPrice, formatToman } from "@/lib/market";
+import { MarketNow, fetchMarket, formatCryptoPrice, formatToman } from "@/lib/market";
 import { toFa } from "@/lib/calendar";
 import FootballResults from "./FootballResults";
+
+type CryptoState = { BTCUSDT: { price: number }; ETHUSDT: { price: number } };
 
 function RateRow({ label, toman, change, rising, prevToman }: { label: string; toman: number; change: number; rising: boolean; prevToman: number }) {
   const cls = rising ? "rate-delta up" : change < 0 ? "rate-delta down" : "rate-delta flat";
@@ -19,12 +21,12 @@ function RateRow({ label, toman, change, rising, prevToman }: { label: string; t
   );
 }
 
-function CryptoRow({ symbol, price, loading }: { symbol: string; price?: number; loading: boolean }) {
+function CryptoRow({ symbol, price }: { symbol: string; price?: number }) {
   return (
     <div className="rate-row crypto-rate-row">
       <span className="rate-label">{symbol}</span>
       <span className="rate-main">
-        {price !== undefined ? formatCryptoPrice(price) : loading ? "…" : "—"}
+        {price !== undefined ? formatCryptoPrice(price) : "—"}
         <span className="rate-unit">USDT</span>
       </span>
     </div>
@@ -40,17 +42,15 @@ function secondsAgo(ts: number): string {
 export default function MarketCard() {
   const [data, setData] = useState<MarketNow | null>(null);
   const [prev, setPrev] = useState<MarketNow | null>(null);
-  const [crypto, setCrypto] = useState<{ BTCUSDT: { price: number }; ETHUSDT: { price: number } } | null>(null);
+  const [crypto, setCrypto] = useState<CryptoState | null>(null);
   const [error, setError] = useState(false);
   const [loading, setLoading] = useState(true);
-  const [cryptoLoading, setCryptoLoading] = useState(true);
   const [, setTick] = useState(0);
 
   useEffect(() => {
     let marketBusy = false;
-    let cryptoBusy = false;
 
-    const load = () => {
+    const loadMarket = () => {
       if (marketBusy) return;
       marketBusy = true;
       fetchMarket()
@@ -62,25 +62,54 @@ export default function MarketCard() {
           setError(false);
           setLoading(false);
         })
-        .catch(() => { setError(true); setLoading(false); })
+        .catch(() => setError(true))
         .finally(() => { marketBusy = false; });
     };
 
-    const loadCrypto = () => {
-      if (cryptoBusy) return;
-      cryptoBusy = true;
-      fetchCryptoPrices()
-        .then((prices) => { setCrypto(prices); setCryptoLoading(false); })
-        .catch(() => setCryptoLoading(false))
-        .finally(() => { cryptoBusy = false; });
+    // USD/gold/coin source is REST-based, so refresh it every second.
+    loadMarket();
+    const marketId = window.setInterval(loadMarket, 1000);
+
+    // BTC/ETH use Binance public WebSocket streams: updates arrive as trades happen,
+    // rather than waiting for a polling interval. Reconnect automatically if needed.
+    let socket: WebSocket | null = null;
+    let reconnectId: number | undefined;
+    let stopped = false;
+
+    const connectCrypto = () => {
+      if (stopped) return;
+      socket = new WebSocket("wss://stream.binance.com:9443/stream?streams=btcusdt@ticker/ethusdt@ticker");
+      socket.onmessage = (event) => {
+        try {
+          const message = JSON.parse(event.data) as { data?: { s?: string; c?: string } };
+          const ticker = message.data;
+          if (!ticker?.s || !ticker.c) return;
+          const price = Number(ticker.c);
+          if (!Number.isFinite(price) || price <= 0) return;
+          setCrypto((current) => ({
+            BTCUSDT: { price: ticker.s === "BTCUSDT" ? price : current?.BTCUSDT.price ?? price },
+            ETHUSDT: { price: ticker.s === "ETHUSDT" ? price : current?.ETHUSDT.price ?? price },
+          }));
+        } catch {
+          // Ignore malformed stream messages.
+        }
+      };
+      socket.onclose = () => {
+        if (!stopped) reconnectId = window.setTimeout(connectCrypto, 1500);
+      };
+      socket.onerror = () => socket?.close();
     };
 
-    load();
-    loadCrypto();
-    const id = window.setInterval(load, 5000);
-    const cryptoId = window.setInterval(loadCrypto, 5000);
+    connectCrypto();
     const tickId = window.setInterval(() => setTick((n) => n + 1), 1000);
-    return () => { window.clearInterval(id); window.clearInterval(cryptoId); window.clearInterval(tickId); };
+
+    return () => {
+      stopped = true;
+      window.clearInterval(marketId);
+      window.clearInterval(tickId);
+      if (reconnectId !== undefined) window.clearTimeout(reconnectId);
+      socket?.close();
+    };
   }, []);
 
   return <div className="market-stack">
@@ -97,9 +126,9 @@ export default function MarketCard() {
         <RateRow label="طلای ۱۸ عیار" toman={data.gold18Toman.toman} change={data.gold18Toman.change} rising={data.gold18Toman.rising} prevToman={prev?.gold18Toman.toman ?? 0} />
         <RateRow label="سکه امامی" toman={data.emamiCoinToman.toman} change={data.emamiCoinToman.change} rising={data.emamiCoinToman.rising} prevToman={prev?.emamiCoinToman.toman ?? 0} />
       </>}
-      <CryptoRow symbol="BTC / USDT" price={crypto?.BTCUSDT.price} loading={cryptoLoading} />
-      <CryptoRow symbol="ETH / USDT" price={crypto?.ETHUSDT.price} loading={cryptoLoading} />
-      <div className="muted small-inline">دلار، طلا و سکه هر ۵ ثانیه بررسی می‌شوند · BTC/ETH هر ۵ ثانیه · نمایش قیمت‌ها اطلاع‌رسانی است.</div>
+      <CryptoRow symbol="BTC / USDT" price={crypto?.BTCUSDT.price} />
+      <CryptoRow symbol="ETH / USDT" price={crypto?.ETHUSDT.price} />
+      <div className="muted small-inline">دلار، طلا و سکه هر ۱ ثانیه بررسی می‌شوند · BTC/ETH به‌صورت لحظه‌ای از WebSocket · نمایش قیمت‌ها اطلاع‌رسانی است.</div>
     </div>
     <FootballResults />
   </div>;
