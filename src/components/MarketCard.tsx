@@ -19,11 +19,14 @@ function RateRow({ label, toman, change, rising, prevToman }: { label: string; t
   );
 }
 
-function CryptoRow({ symbol, price }: { symbol: string; price: number }) {
+function CryptoRow({ symbol, price, loading }: { symbol: string; price?: number; loading: boolean }) {
   return (
     <div className="rate-row crypto-rate-row">
       <span className="rate-label">{symbol}</span>
-      <span className="rate-main">{formatCryptoPrice(price)}<span className="rate-unit">USDT</span></span>
+      <span className="rate-main">
+        {price !== undefined ? formatCryptoPrice(price) : loading ? "…" : "—"}
+        <span className="rate-unit">USDT</span>
+      </span>
     </div>
   );
 }
@@ -82,13 +85,10 @@ export default function MarketCard() {
         <RateRow label="دلار آمریکا" toman={data.usdToman.toman} change={data.usdToman.change} rising={data.usdToman.rising} prevToman={prev?.usdToman.toman ?? 0} />
         <RateRow label="طلای ۱۸ عیار" toman={data.gold18Toman.toman} change={data.gold18Toman.change} rising={data.gold18Toman.rising} prevToman={prev?.gold18Toman.toman ?? 0} />
         <RateRow label="سکه امامی" toman={data.emamiCoinToman.toman} change={data.emamiCoinToman.change} rising={data.emamiCoinToman.rising} prevToman={prev?.emamiCoinToman.toman ?? 0} />
-        {cryptoLoading && !crypto && <div className="muted small-inline">در حال دریافت قیمت BTC و ETH…</div>}
-        {crypto && <>
-          <CryptoRow symbol="BTC" price={crypto.BTCUSDT.price} />
-          <CryptoRow symbol="ETH" price={crypto.ETHUSDT.price} />
-        </>}
-        <div className="muted small-inline">به‌روزرسانی ارز و طلا هر ۳۰ ثانیه · BTC/ETH هر ۱۰ ثانیه · قیمت‌ها اطلاع‌رسانی است و مبنای معامله نیست.</div>
       </>}
+      <CryptoRow symbol="BTC / USDT" price={crypto?.BTCUSDT.price} loading={cryptoLoading} />
+      <CryptoRow symbol="ETH / USDT" price={crypto?.ETHUSDT.price} loading={cryptoLoading} />
+      <div className="muted small-inline">به‌روزرسانی ارز و طلا هر ۳۰ ثانیه · BTC/ETH هر ۱۰ ثانیه · قیمت‌ها اطلاع‌رسانی است و مبنای معامله نیست.</div>
     </div>
     <FootballResults />
   </div>;
