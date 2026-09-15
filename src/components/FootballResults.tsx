@@ -5,14 +5,10 @@ import { toFa } from "@/lib/calendar";
 
 type League = "eng" | "esp" | "ita";
 type Match = {
-  id: string;
-  date: string;
-  state: "pre" | "in" | "post";
-  detail: string;
+  id: string; date: string; state: "pre" | "in" | "post"; detail: string;
   home: { name: string; logo: string | null; score: string | null };
   away: { name: string; logo: string | null; score: string | null };
 };
-
 type ResponseData = { league: League; name: string; matches: Match[]; error?: boolean };
 
 const LEAGUES: Array<{ id: League; label: string; icon: string }> = [
@@ -27,7 +23,7 @@ function MatchRow({ match }: { match: Match }) {
   return <div className="football-match">
     <div className="football-team away"><span>{match.away.name}</span>{match.away.logo && <img src={match.away.logo} alt="" loading="lazy" />}</div>
     <div className="football-score">{match.state === "pre" ? <span className="football-time">{status}</span> : <strong>{toFa(Number(match.home.score ?? 0))} - {toFa(Number(match.away.score ?? 0))}</strong>}<small className={match.state === "in" ? "live" : ""}>{status}</small></div>
-    <div className="football-team home"><img src={match.home.logo ?? ""} alt="" loading="lazy" /><span>{match.home.name}</span></div>
+    <div className="football-team home">{match.home.logo && <img src={match.home.logo} alt="" loading="lazy" />}<span>{match.home.name}</span></div>
   </div>;
 }
 
