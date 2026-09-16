@@ -14,6 +14,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${base}/date-converter`, priority: 0.75, changeFrequency: "monthly" as const },
     { url: `${base}/gold`, priority: 0.9, changeFrequency: "hourly" as const },
     { url: `${base}/dollar`, priority: 0.9, changeFrequency: "hourly" as const },
+    { url: `${base}/coin`, priority: 0.9, changeFrequency: "hourly" as const },
     { url: `${base}/football`, priority: 0.9, changeFrequency: "hourly" as const },
   ];
   const yearPages = years.map((year) => ({ url: `${base}/calendar/${year}`, priority: 0.75, changeFrequency: "monthly" as const }));
