@@ -3,7 +3,6 @@
 import { useEffect, useState } from "react";
 import { MarketNow, fetchMarket, formatCryptoPrice, formatToman } from "@/lib/market";
 import { toFa } from "@/lib/calendar";
-import FootballResults from "./FootballResults";
 
 type CryptoState = { BTCUSDT: { price: number }; ETHUSDT: { price: number } };
 
@@ -130,6 +129,5 @@ export default function MarketCard() {
       <CryptoRow symbol="ETH / USDT" price={crypto?.ETHUSDT.price} />
       <div className="muted small-inline">دلار، طلا و سکه هر ۱ ثانیه بررسی می‌شوند · BTC/ETH به‌صورت لحظه‌ای از WebSocket · نمایش قیمت‌ها اطلاع‌رسانی است.</div>
     </div>
-    <FootballResults />
   </div>;
 }
