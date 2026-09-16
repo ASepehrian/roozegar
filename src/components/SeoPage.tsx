@@ -6,7 +6,7 @@ export default function SeoPage({children}:{children:ReactNode}){
     <nav className="seo-nav" aria-label="ناوبری">
       <Link className="seo-brand" href="/">روزگار</Link>
       <div className="seo-navlinks">
-        <Link href="/today">امروز</Link><Link href="/calendar">تقویم</Link><Link href="/events">مناسبت‌ها</Link><Link href="/prayer-times">اوقات شرعی</Link><Link href="/date-converter">تبدیل تاریخ</Link><Link href="/gold">قیمت طلا</Link><Link href="/dollar">قیمت دلار</Link><Link href="/football">نتایج فوتبال</Link>
+        <Link href="/today">امروز</Link><Link href="/calendar">تقویم</Link><Link href="/events">مناسبت‌ها</Link><Link href="/prayer-times">اوقات شرعی</Link><Link href="/date-converter">تبدیل تاریخ</Link><Link href="/gold">قیمت طلا</Link><Link href="/dollar">قیمت دلار</Link><Link href="/coin">قیمت سکه</Link><Link href="/football">نتایج فوتبال</Link>
       </div>
     </nav>
     {children}
