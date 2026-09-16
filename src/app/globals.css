@@ -138,3 +138,21 @@ select:focus-visible,input:focus-visible { outline:2px solid var(--teal); outlin
 footer { margin-top:40px; padding-top:18px; border-top:1px solid var(--line); color:var(--ink-faint); font-size:.76em; text-align:center; }
 @media (max-width:700px){ .app{padding-inline:14px}.two-col{grid-template-columns:1fr}.hero{padding-top:26px}.day-cell{font-size:.82em}.prayer-grid{grid-template-columns:1fr 1fr} }
 @media (max-width:600px){ .conv-result{grid-template-columns:1fr} header{padding-top:18px}.brand-mark{font-size:1.55em} }
+
+/* Lower utility layout: keep football and date tools side-by-side on desktop. */
+.utility-row { display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:14px; margin-top:26px; align-items:start; }
+.utility-row > * { min-width:0; }
+.date-tools-side .section-title { margin-top:0; }
+.date-tools-side .card { padding:14px; border-radius:14px; }
+.date-tools-side .tabs { gap:6px; margin-bottom:10px; }
+.date-tools-side .tab { padding:6px 10px; font-size:.78em; }
+.date-tools-side .conv-row { gap:7px; }
+.date-tools-side select,.date-tools-side input[type=number] { min-width:68px; padding:6px 8px; font-size:.8em; }
+.date-tools-side .field { gap:3px; }
+.date-tools-side .field label { font-size:10px; }
+.date-tools-side .conv-result { margin-top:10px; gap:6px; }
+.date-tools-side .conv-result .cell { padding:7px 8px; }
+.date-tools-side .conv-result .cell .lbl { font-size:.65em; }
+.date-tools-side .conv-result .cell .val { font-size:.8em; }
+.date-tools-side .tool-note { margin-top:8px; font-size:.75em; }
+@media (max-width:700px){ .utility-row{grid-template-columns:1fr;}.date-tools-side{order:1}.football-side{order:2} }
