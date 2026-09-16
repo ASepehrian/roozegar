@@ -8,6 +8,7 @@ import PoemCard from "./PoemCard";
 import PrayerTimesCard from "./PrayerTimesCard";
 import SettingsPanel from "./SettingsPanel";
 import WeatherCard from "./WeatherCard";
+import FootballResults from "./FootballResults";
 import ZodiacBadge from "./ZodiacBadge";
 import {
   GREGORIAN_MONTHS,
@@ -176,7 +177,10 @@ export default function CalendarApp() {
         <MarketCard />
       </div>
     </div>
-    <div className="section-title">ابزارهای تاریخ</div><DateTools anchor={anchor} />
+    <div className="utility-row">
+      <div className="date-tools-side"><div className="section-title">ابزارهای تاریخ</div><DateTools anchor={anchor} /></div>
+      <div className="football-side"><FootballResults /></div>
+    </div>
     <div className="section-title">اوقات شرعی</div><PrayerTimesCard anchor={anchor} cityId={prayerCity} method={prayerMethod} onCityChange={(id) => { setPrayerCity(id); store(STORAGE_KEYS.prayerCity, id); }} onMethodChange={(m) => { setPrayerMethod(m); store(STORAGE_KEYS.prayerMethod, m); }} />
     <footer>روزگار · یک تقویم ساده و بدون ردیابی، برای دیدن روزها</footer>
   </div>;
