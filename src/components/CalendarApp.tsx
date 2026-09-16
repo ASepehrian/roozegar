@@ -178,10 +178,16 @@ export default function CalendarApp() {
       </div>
     </div>
     <div className="utility-row">
-      <div className="date-tools-side"><div className="section-title">ابزارهای تاریخ</div><DateTools anchor={anchor} /></div>
+      <div className="date-tools-side">
+        <div className="section-title">ابزارهای تاریخ</div>
+        <DateTools anchor={anchor} />
+        <div className="section-title prayer-title">اوقات شرعی</div>
+        <div className="prayer-compact">
+          <PrayerTimesCard anchor={anchor} cityId={prayerCity} method={prayerMethod} onCityChange={(id) => { setPrayerCity(id); store(STORAGE_KEYS.prayerCity, id); }} onMethodChange={(m) => { setPrayerMethod(m); store(STORAGE_KEYS.prayerMethod, m); }} />
+        </div>
+      </div>
       <div className="football-side"><FootballResults /></div>
     </div>
-    <div className="section-title">اوقات شرعی</div><PrayerTimesCard anchor={anchor} cityId={prayerCity} method={prayerMethod} onCityChange={(id) => { setPrayerCity(id); store(STORAGE_KEYS.prayerCity, id); }} onMethodChange={(m) => { setPrayerMethod(m); store(STORAGE_KEYS.prayerMethod, m); }} />
     <footer>روزگار · یک تقویم ساده و بدون ردیابی، برای دیدن روزها</footer>
   </div>;
 }
