@@ -979,3 +979,59 @@ footer {
     grid-template-columns: 1fr !important;
   }
 }
+
+
+/* ===== Roozegar visual refresh v2 ===== */
+:root{
+  --v2-bg:#f4f1e8;
+  --v2-ink:#19362c;
+  --v2-muted:#6b786f;
+  --v2-green:#174b3b;
+  --v2-lime:#dce7bd;
+  --v2-card:rgba(255,255,252,.92);
+}
+html,body{background:
+  radial-gradient(900px 500px at 90% -10%,rgba(197,213,166,.34),transparent 62%),
+  radial-gradient(700px 420px at 0% 45%,rgba(229,213,185,.28),transparent 60%),
+  var(--v2-bg)!important;}
+.app{max-width:1240px!important;padding:22px 32px 72px!important;}
+header{max-width:1160px;margin:0 auto;box-shadow:0 12px 36px rgba(23,54,44,.08)!important;}
+.hero{margin-top:26px!important;min-height:390px;padding:48px 52px 46px!important;border-radius:36px!important;
+ background:
+ radial-gradient(circle at 82% 18%,rgba(210,229,174,.25),transparent 24%),
+ radial-gradient(circle at 18% 90%,rgba(112,158,128,.20),transparent 30%),
+ linear-gradient(135deg,#285c49 0%,#174b3b 48%,#10372b 100%)!important;
+ box-shadow:0 30px 80px rgba(23,75,59,.25)!important;}
+.hero:after{content:"";position:absolute;inset:auto -80px -140px auto;width:520px;height:360px;border-radius:50%;
+ background:radial-gradient(ellipse,rgba(221,232,193,.28),transparent 66%);filter:blur(8px);z-index:-1;}
+.hero-date{font-size:clamp(3rem,7vw,5.6rem)!important;letter-spacing:-.035em!important;}
+.hero-row{gap:12px!important;}
+.hero-row>*{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.11);padding:7px 12px;border-radius:999px;}
+.hero-extra{max-width:720px;}
+.two-col{grid-template-columns:1.08fr .92fr!important;gap:20px!important;}
+.card,.selected-info{box-shadow:0 18px 50px rgba(29,55,45,.07)!important;border-color:rgba(34,70,57,.10)!important;}
+.cal-market-row{grid-template-columns:1.45fr .8fr!important;gap:22px!important;margin-top:18px;}
+.cal-side,.market-side{background:rgba(255,255,255,.42);border-radius:30px;padding:20px;border:1px solid rgba(34,70,57,.07);}
+.cal-side .cal-nav{padding-inline:2px!important;}
+.day-grid{gap:7px!important;}
+.day-cell{min-height:82px!important;border-radius:16px!important;background:rgba(255,255,255,.78)!important;}
+.day-cell.today{background:linear-gradient(145deg,#205a46,#174b3b)!important;color:#fff!important;}
+.day-cell.holiday{background:#fff0eb!important;}
+.utility-row{grid-template-columns:.95fr 1.05fr!important;gap:20px!important;margin-top:30px!important;}
+.date-tools-side,.football-side{min-width:0;}
+.date-tools-side>.card,.football-side>.card{height:100%;}
+.prayer-compact .card{box-shadow:none!important;background:rgba(248,247,241,.72)!important;}
+.section-title{margin-top:30px!important;color:#66766d!important;}
+footer{max-width:900px;margin-inline:auto!important;}
+@media(max-width:900px){
+ .app{padding-inline:18px!important}
+ .cal-market-row,.utility-row,.two-col{grid-template-columns:1fr!important}
+ .hero{padding:36px 28px 34px!important;min-height:0}
+}
+@media(max-width:600px){
+ header{border-radius:22px!important}
+ .hero{border-radius:26px!important}
+ .hero-date{font-size:clamp(2.6rem,12vw,4rem)!important}
+ .day-cell{min-height:62px!important;border-radius:12px!important}
+ .cal-side,.market-side{padding:14px;border-radius:22px}
+}
